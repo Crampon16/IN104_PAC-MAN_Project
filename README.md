@@ -1,2 +1,4 @@
 # IN104_PAC-MAN_Project
-Repository for our work on the PAC-MAN project.
+Team : Liam Rampon, Luc Jiang & Arthur Amorim.
+
+This is the repository for our work on the PAC-MAN project.
