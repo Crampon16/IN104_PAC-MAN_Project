@@ -32,7 +32,7 @@ struct Square
 
 struct Stage
 {
-    std::unordered_map<int, std::unordered_map<int, Square>> matrix;
+    std::vector<std::vector<Square>> matrix;
     
     //Allows pathfinding functions to quickly locate the position of other entities
     std::vector<std::pair<int, int>> entities_positions;
