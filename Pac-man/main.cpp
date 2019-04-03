@@ -17,7 +17,7 @@
 
 using namespace std;
 
-bool init(SDL_Window* window, SDL_Renderer** renderer)
+bool init(SDL_Window** window, SDL_Renderer** renderer)
 {
     //Initialization flag
     bool success = true;
@@ -37,7 +37,7 @@ bool init(SDL_Window* window, SDL_Renderer** renderer)
         }
         
         //Create window
-        window = SDL_CreateWindow( "Overworld", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        *window = SDL_CreateWindow( "Overworld", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( window == NULL )
         {
             printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -46,7 +46,7 @@ bool init(SDL_Window* window, SDL_Renderer** renderer)
         else
         {
             //Create vsynced renderer for window
-            *renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+            *renderer = SDL_CreateRenderer( *window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
             if( renderer == NULL )
             {
                 printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -136,25 +136,36 @@ void close(SDL_Window* window, SDL_Renderer* renderer, vector<LTexture*> texture
 
 int main(int argc, const char * argv[])
 {
-    unordered_map<int, unordered_map<int, bool>> matrix;
-    for (int i = 0; i < 3; ++i)
+
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    
+    if( init(&window, &renderer) )
     {
-        for (int j = 0; j < 3; ++j)
+        cout << "Initialization complete." << endl;
+        
+        vector<LTexture*> textures;
+        vector<string> file_path;
+        
+        if ( loadMedia(textures, file_path, renderer) )
         {
-            matrix[i][j] = true;
+            cout << "Sprite loading complete." << endl;
+            
+            SDL_Event e;
+            bool quit = false;
+            
+            while( !quit )
+            {
+                while (SDL_PollEvent( &e ) != 0)
+                {
+                    if(e.type == SDL_QUIT)
+                    {
+                        quit = true;
+                    }
+                }
+            }
+            
+            close(window, renderer, textures);
         }
     }
-    
-    /*for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-        {
-            cout << matrix[i][j];
-        }
-        cout << endl;
-    }*/
-    
-    int mask1 = 1 << 3, mask2 = 1 << 5;
-    cout << (mask1 & mask2) << endl;
-    return 0;
 }
