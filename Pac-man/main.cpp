@@ -14,6 +14,8 @@
 
 #include "constants.hpp"
 #include "texture_wrapper.hpp"
+#include "entity.hpp"
+#include "graphic_display.hpp"
 
 using namespace std;
 
@@ -37,7 +39,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
         }
         
         //Create window
-        *window = SDL_CreateWindow( "Overworld", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        *window = SDL_CreateWindow( "Pac Man", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( window == NULL )
         {
             printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -136,6 +138,9 @@ void close(SDL_Window* window, SDL_Renderer* renderer, vector<LTexture*> texture
 
 int main(int argc, const char * argv[])
 {
+    //This line initializes the RNG with the current date, which allows for randomness to occur
+    //between different games
+    srand( (uint) time(0) );
 
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -151,6 +156,25 @@ int main(int argc, const char * argv[])
         {
             cout << "Sprite loading complete." << endl;
             
+            //filler code to test the drawing system
+            //usefull template for a Stage creator function...
+            Stage stage;
+            for (int i = 0; i < STAGE_HEIGHT; ++i)
+            {
+                vector<Square> temp_vect;
+                stage.matrix.push_back(temp_vect);
+                for (int j = 0; j < STAGE_WIDTH; ++j)
+                {
+                    Square temp_square;
+                    if ( rand()%3 == 0)
+                        temp_square.obstructed = true;
+                    else
+                        temp_square.item = "gum";
+                    
+                    stage.matrix[i].push_back(temp_square);
+                }
+            }
+            
             SDL_Event e;
             bool quit = false;
             
@@ -163,6 +187,8 @@ int main(int argc, const char * argv[])
                         quit = true;
                     }
                 }
+                
+                display(renderer, stage);
             }
             
             close(window, renderer, textures);
