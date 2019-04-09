@@ -136,7 +136,7 @@ void close(SDL_Window* window, SDL_Renderer* renderer, vector<LTexture*> texture
     SDL_Quit();
 }
 
-int main(int argc, const char * argv[])
+int main(int argv, char** args)
 {
     //This line initializes the RNG with the current date, which allows for randomness to occur
     //between different games
@@ -151,6 +151,7 @@ int main(int argc, const char * argv[])
         
         vector<LTexture*> textures;
         vector<string> file_path;
+        file_path.push_back("313596.png");
         
         if ( loadMedia(textures, file_path, renderer) )
         {
@@ -158,6 +159,7 @@ int main(int argc, const char * argv[])
             
             //filler code to test the drawing system
             //usefull template for a Stage creator function...
+            /*
             Stage stage;
             for (int i = 0; i < STAGE_HEIGHT; ++i)
             {
@@ -174,6 +176,10 @@ int main(int argc, const char * argv[])
                     stage.matrix[i].push_back(temp_square);
                 }
             }
+             */
+            
+            Stage stage = init_stage("layout.txt");
+            
             
             SDL_Event e;
             bool quit = false;
