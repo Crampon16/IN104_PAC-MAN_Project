@@ -9,10 +9,16 @@
 #ifndef labyrinth_hpp
 #define labyrinth_hpp
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <stdio.h>
+
 #include <unordered_map>
 #include <string>
 #include <vector>
+
+#include "constants.hpp"
 
 
 //A Stage is composed of a matrix of Squares
@@ -37,4 +43,6 @@ struct Stage
     //Allows pathfinding functions to quickly locate the position of other entities
     std::vector<std::pair<int, int>> entities_positions;
 };
+
+Stage init_stage(std::string path);
 #endif /* labyrinth_hpp */
