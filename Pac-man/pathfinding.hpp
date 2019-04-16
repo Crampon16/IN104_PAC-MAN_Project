@@ -26,5 +26,8 @@ std::stack< std::pair<int, int> > inky_AI(std::pair<int, int> pos, Stage& stage)
 //heads towards pac-man, or go away if too close of him
 std::stack< std::pair<int, int> > clyde_AI(std::pair<int, int> pos, Stage& stage);
 
+//get last_input and update the position
+std::stack< std::pair<int, int> > pacman_AI(std::pair<int, int> pos, Stage& stage);
+
 
 #endif /* pathfinding_hpp */
