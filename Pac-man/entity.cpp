@@ -74,7 +74,7 @@ void Entity::move(int delta, Stage& stage)
         float norm = sqrt(direction.x*direction.x + direction.y*direction.y);
         
         //if the movement would reach beyond the target
-        if (norm <= speed*delta)
+        if (norm <= speed*delta/1000)
         {
             position = target_position;
             stage.entities_positions[Id] = get_square_position(position);
@@ -90,8 +90,8 @@ void Entity::move(int delta, Stage& stage)
         }
         else
         {
-            position.x += direction.x*speed*delta/norm;
-            position.y += direction.y*speed*delta/norm;
+            position.x += direction.x*speed*delta/norm/1000;
+            position.y += direction.y*speed*delta/norm/1000;
             stage.entities_positions[Id] = get_square_position(position);
         }
         
