@@ -3,7 +3,7 @@
 //  Pac-man
 //
 //  Created by Liam Rampon on 02/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
+//  Copyright Â© 2019 Liam Rampon. All rights reserved.
 //
 
 #include "entity.hpp"
@@ -17,7 +17,7 @@ Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std
     Id = ID;
 }
 
-SDL_Point Entity::get_postion()
+SDL_Point Entity::get_position()
 {
     return position;
 }
