@@ -66,7 +66,6 @@ void Entity::move(int delta, Stage& stage)
             find_path(stage);
         }
 
-        SDL_Point target_position;
         std::pair<int,int> target_square = path.top();
 
         target_position.x = target_square.second*STAGE_HEIGHT + SQUARE_SIZE/2;
