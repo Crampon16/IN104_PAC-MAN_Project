@@ -13,6 +13,10 @@ Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std
     position = pos;
     speed = spd;
     path = paff;
+    if (path.empty())
+    {
+        path.push({pos.x/STAGE_WIDTH, pos.y/STAGE_HEIGHT});
+    }
     path_finder = paff_finder;
     Id = ID;
 }
@@ -37,81 +41,56 @@ float sign(float n)
 std::pair<int,int> get_square_position(SDL_Point position)
 {
     std::pair<int, int> square;
-    square.first = (int) (position.y/STAGE_HEIGHT);
-    square.second = (int) (position.x/STAGE_WIDTH);
+    square.first = (position.y/STAGE_HEIGHT);
+    square.second = (position.x/STAGE_WIDTH);
     return square;
 }
 
 void Entity::move(int delta, Stage& stage)
 {
-    SDL_Point former_position = position;
-
-    //position.x = position.x + delta*current_speed.x;
-    //position.y = position.y + delta*current_speed.y;
-    //delta is measured in milliseconds.
-
     std::pair<int, int> square = get_square_position(position);
-
+    
     SDL_Point target_position;
     std::pair<int,int> target_square = path.top();
-
+    
     target_position.x = target_square.second*STAGE_HEIGHT + SQUARE_SIZE/2;
     target_position.y = target_square.first*STAGE_WIDTH + SQUARE_SIZE/2;
-
-    if (target_position.x == position.x && target_position.y == position.y)
+    
+    //in this case the entity is stationnary
+    if(target_position.x == position.x and target_position.y == position.y)
     {
         path.pop();
         if (path.empty())
-        {
             find_path(stage);
-        }
-
-        std::pair<int,int> target_square = path.top();
-
-        target_position.x = target_square.second*STAGE_HEIGHT + SQUARE_SIZE/2;
-        target_position.y = target_square.first*STAGE_WIDTH + SQUARE_SIZE/2;
     }
-
-    SDL_Point direction;
-    direction.x = target_position.x - position.x;
-    direction.y = target_position.y - position.y;
-
-    float norm = sqrt(direction.x*direction.x + direction.y*direction.y);
-    position.x += direction.x/norm*speed*delta;
-    position.y += direction.y/norm*speed*delta;
-
-
-    if ((target_position.x - former_position.x)*(target_position.x - position.x) + (target_position.y - former_position.y)*(target_position.y - position.y) <= 0)
+    else
     {
-        if (square != path.top())
-        {
-            //error (unit test)
-        }
-        SDL_Point error;
-        error.x = (target_position.x - position.x)*sign(target_position.x - position.x);
-        error.y = (target_position.y - position.y)*sign(target_position.y - position.y);
-
-        position = target_position;
-        path.pop();
-
-        if (path.empty())
-        {
-            find_path(stage);
-        }
-
+        SDL_Point direction;
         direction.x = target_position.x - position.x;
         direction.y = target_position.y - position.y;
-
+        
         float norm = sqrt(direction.x*direction.x + direction.y*direction.y);
-
-        position.x += error.x*direction.x/norm;
-        position.y += error.y*direction.y/norm;
-
+        
+        //if the movement would reach beyond the target
+        if (norm <= speed*delta)
+        {
+            position = target_position;
+            path.pop();
+            if (path.empty())
+            {
+                find_path(stage);
+            }
+        }
+        else
+        {
+            position.x += direction.x*speed*delta/norm;
+            position.y += direction.y*speed*delta/norm;
+        }
+        
         square = get_square_position(position);
         stage.entities_positions[Id] = square;
-
     }
-
+    
 }
 
 void Entity::find_path(Stage& stage)
@@ -119,7 +98,7 @@ void Entity::find_path(Stage& stage)
     std::pair<int, int> square;
     square.first = position.y % STAGE_HEIGHT;
     square.second = position.x % STAGE_WIDTH;
-
+    
     path = path_finder(square, stage);
 }
 
