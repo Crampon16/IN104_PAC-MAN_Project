@@ -53,11 +53,14 @@ void display(SDL_Renderer* renderer, Stage stage)
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 );
     SDL_RenderClear( renderer );
     
-    //Draw in blue
-    SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF );
+    
+    //Draw the limits of the stage
+    SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
     SDL_Rect stage_outline = {0,0, SQUARE_SIZE*STAGE_WIDTH, SQUARE_SIZE*STAGE_HEIGHT};
     SDL_RenderDrawRect(renderer, &stage_outline);
     
+    
+    //Draw each Square of the stage
     SDL_Rect square_outline = {0, 0, SQUARE_SIZE, SQUARE_SIZE};
     SDL_Point square_center = {SQUARE_SIZE/2, SQUARE_SIZE/2};
     
@@ -70,15 +73,13 @@ void display(SDL_Renderer* renderer, Stage stage)
         {
             if (stage.matrix[i][j].obstructed)
             {
-                //Draw in blue
-                SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF );
+                SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
                 SDL_RenderDrawRect(renderer, &square_outline);
             }
             
             if (stage.matrix[i][j].item == "gum")
             {
-                //Draw in yellow
-                SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF );
+                SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF ); //Draw in yellow
                 DrawCircle(renderer, square_center, SQUARE_SIZE/5);
             }
             square_outline.x += SQUARE_SIZE;
@@ -86,6 +87,14 @@ void display(SDL_Renderer* renderer, Stage stage)
         }
         square_outline.y += SQUARE_SIZE;
         square_center.y += SQUARE_SIZE;
+    }
+    
+    
+    //Draw the enities in the stage
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0x00, 0x00, 0xFF ); //Draw in red
+    for(int i = 0; i < stage.entities.size(); ++i)
+    {
+        DrawCircle(renderer, stage.entities[i].get_postion(), SQUARE_SIZE/2);
     }
     
     SDL_RenderPresent( renderer );
