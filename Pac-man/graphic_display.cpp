@@ -94,7 +94,7 @@ void display(SDL_Renderer* renderer, Stage stage)
     SDL_SetRenderDrawColor( renderer, 0xFF, 0x00, 0x00, 0xFF ); //Draw in red
     for(int i = 0; i < stage.entities.size(); ++i)
     {
-        DrawCircle(renderer, stage.entities[i].get_postion(), SQUARE_SIZE/2);
+        DrawCircle(renderer, stage.entities[i].get_position(), SQUARE_SIZE/2);
     }
     
     SDL_RenderPresent( renderer );
