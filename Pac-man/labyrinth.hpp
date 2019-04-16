@@ -47,7 +47,7 @@ struct Stage
     
     std::vector<Entity> entities;
     
-    std::string last_input;
+    char last_key_input;
 };
 
 Stage init_stage(std::string path);
