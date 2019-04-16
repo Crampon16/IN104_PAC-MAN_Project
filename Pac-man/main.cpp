@@ -182,7 +182,7 @@ int main(int argv, char** args)
              */
             
             Stage stage = init_stage("layout.txt");
-            Entity pac( {3*SQUARE_SIZE/2, 3*SQUARE_SIZE/2}, 1, std::stack<std::pair<int,int>>() , pacman_AI, 0);
+            Entity pac( {3*SQUARE_SIZE/2, 3*SQUARE_SIZE/2}, 250, std::stack<std::pair<int,int>>() , pacman_AI, 0);
             stage.entities.push_back(pac);
             stage.entities_positions.push_back({1,1});
             
