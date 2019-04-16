@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <stack>
+#include <math.h>
 
 #include "SDL.h"
 
@@ -20,11 +21,13 @@
 #include "texture_wrapper.hpp"
 #include "constants.hpp"
 
+struct Stage;
+
 class Entity
 {
 public:
 
-    Entity(SDL_Point position, SDL_Point speed, SDL_Point current_speed, std::stack<std::pair<int,int> > path,
+    Entity(SDL_Point position, int speed, std::stack<std::pair<int,int> > path,
             std::stack<std::pair<int,int> > (*path_finder)(std::pair<int, int>, Stage&), int Id);
 
     SDL_Point get_postion();
@@ -33,7 +36,7 @@ public:
     /*
      Updates position: "postion += delta*current_speed"
      delta is measured in milliseconds.
-     If the top of path is reached, pops it and changes current_speed to reach the next Square.
+     If the top of path is reached, pops it.
      If path is empty, calls find_path().
     */
     void move(int delta, Stage& stage);
@@ -53,11 +56,10 @@ private:
     //contains every hitbox of the entity
     std::vector<SDL_Rect> colliders;
 
-    //how fast the Entity would be moving if going x-wise ou y-wise
-    SDL_Point speed;
-    //how fast (x-wise and y-wise) the Entity is moving
-    SDL_Point current_speed;
+    //how fast the Entity would be moving
+    int speed;
 
+    //Entity's Id
     int Id;
 
     //What Squares the Entity is going to go through.
