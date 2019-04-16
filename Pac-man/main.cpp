@@ -14,9 +14,11 @@
 
 #include "constants.hpp"
 #include "texture_wrapper.hpp"
+#include "time_wrapper.hpp"
 #include "entity.hpp"
 #include "graphic_display.hpp"
 #include "pathfinding.hpp"
+#include "controller.hpp"
 
 using namespace std;
 
@@ -180,24 +182,37 @@ int main(int argv, char** args)
              */
             
             Stage stage = init_stage("layout.txt");
-            Entity pac( {SQUARE_SIZE/2, SQUARE_SIZE/2}, {0,0}, {0,0}, std::stack<std::pair<int,int>>() , blinky_AI, 0);
+            Entity pac( {3*SQUARE_SIZE/2, 3*SQUARE_SIZE/2}, 1, std::stack<std::pair<int,int>>() , pacman_AI, 0);
             stage.entities.push_back(pac);
+            stage.entities_positions.push_back({1,1});
             
             
             SDL_Event e;
             bool quit = false;
             
+            
+            FPSCapper cap(60);
+            
             while( !quit )
             {
+                cap.start();
                 while (SDL_PollEvent( &e ) != 0)
                 {
                     if(e.type == SDL_QUIT)
                     {
                         quit = true;
                     }
+                    get_keyboard_input(stage, e);
                 }
-                
+                for (int i = 0; i < stage.entities.size(); ++i)
+                {
+                    stage.entities[i].move(17, stage);
+                }
                 display(renderer, stage);
+                cout << "x:" << stage.entities[0].get_position().x << endl;
+                cout << "y:" << stage.entities[0].get_position().y << endl;
+                
+                cap.cap();
             }
             
             close(window, renderer, textures);
