@@ -15,25 +15,34 @@ typedef std::pair<int, int> SquarePos;
 SquareStack blinky_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
-    
+
     return stack;
 }
 
 SquareStack pinky_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
-    
+
     return stack;
 }
 SquareStack inky_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
-    
+
     return stack;
 }
 SquareStack clyde_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
-    
+
+    return stack;
+}
+
+SquareStack pacman_AI(SquarePos pos, Stage& stage)
+{
+    SquareStack stack;
+    std::string last_input = stage.last_input;
+
+
     return stack;
 }
