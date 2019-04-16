@@ -3,7 +3,7 @@
 //  Pac-man
 //
 //  Created by Liam Rampon on 02/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
+//  Copyright Â© 2019 Liam Rampon. All rights reserved.
 //
 
 #ifndef entity_hpp
@@ -30,7 +30,7 @@ public:
     Entity(SDL_Point position, int speed, std::stack<std::pair<int,int> > path,
             std::stack<std::pair<int,int> > (*path_finder)(std::pair<int, int>, Stage&), int Id);
 
-    SDL_Point get_postion();
+    SDL_Point get_position();
     std::vector<SDL_Rect> get_colliders();
 
     /*
