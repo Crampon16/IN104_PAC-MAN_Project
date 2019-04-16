@@ -16,6 +16,7 @@
 #include "texture_wrapper.hpp"
 #include "entity.hpp"
 #include "graphic_display.hpp"
+#include "pathfinding.hpp"
 
 using namespace std;
 
@@ -179,6 +180,8 @@ int main(int argv, char** args)
              */
             
             Stage stage = init_stage("layout.txt");
+            Entity pac( {SQUARE_SIZE/2, SQUARE_SIZE/2}, {0,0}, {0,0}, std::stack<std::pair<int,int>>() , blinky_AI, 0);
+            stage.entities.push_back(pac);
             
             
             SDL_Event e;
