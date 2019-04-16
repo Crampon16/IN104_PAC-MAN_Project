@@ -19,7 +19,9 @@
 #include <vector>
 
 #include "constants.hpp"
+#include "entity.hpp"
 
+class Entity;
 
 //A Stage is composed of a matrix of Squares
 struct Square
@@ -42,6 +44,10 @@ struct Stage
     
     //Allows pathfinding functions to quickly locate the position of other entities
     std::vector<std::pair<int, int>> entities_positions;
+    
+    std::vector<Entity> entities;
+    
+    std::string last_input;
 };
 
 Stage init_stage(std::string path);
