@@ -72,8 +72,7 @@ SquareStack pacman_AI2(SquarePos pos, Stage& stage)
 SquareStack pacman_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
-    SquarePos current_pos = {stage.entities_positions[0].first,stage.entities_positions[0].second};
-    SquarePos original_pos = current_pos;
+    SquarePos current_pos = pos;
     
     char input = stage.last_key_input;
     int line_movement = 0, column_movement = 0;
@@ -94,7 +93,7 @@ SquareStack pacman_AI(SquarePos pos, Stage& stage)
             break;
             
         default:
-            stack.push(original_pos);
+            stack.push(pos);
             return stack;
             break;
     }
@@ -104,7 +103,7 @@ SquareStack pacman_AI(SquarePos pos, Stage& stage)
     //if trying to go through a wall
     if(stage.matrix[current_pos.first + line_movement][current_pos.second + column_movement].obstructed)
     {
-        stack.push(original_pos);
+        stack.push(pos);
         return stack;
     }
     
