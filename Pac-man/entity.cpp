@@ -15,7 +15,7 @@ Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std
     path = paff;
     if (path.empty())
     {
-        path.push({pos.x/STAGE_WIDTH, pos.y/STAGE_HEIGHT});
+        path.push({pos.x/SQUARE_SIZE, pos.y/SQUARE_SIZE});
     }
     path_finder = paff_finder;
     Id = ID;
@@ -41,8 +41,8 @@ float sign(float n)
 std::pair<int,int> get_square_position(SDL_Point position)
 {
     std::pair<int, int> square;
-    square.first = (position.y/STAGE_HEIGHT);
-    square.second = (position.x/STAGE_WIDTH);
+    square.first = (position.y/SQUARE_SIZE);
+    square.second = (position.x/SQUARE_SIZE);
     return square;
 }
 
@@ -103,8 +103,8 @@ void Entity::move(int delta, Stage& stage)
 void Entity::find_path(Stage& stage)
 {
     std::pair<int, int> square;
-    square.first = position.y % STAGE_HEIGHT;
-    square.second = position.x % STAGE_WIDTH;
+    square.first = position.y / SQUARE_SIZE;
+    square.second = position.x / SQUARE_SIZE;
     
     path = path_finder(square, stage);
 }
