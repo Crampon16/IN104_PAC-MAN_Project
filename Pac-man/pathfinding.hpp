@@ -11,8 +11,11 @@
 
 #include <stdio.h>
 
+#include <queue>
+
 #include "entity.hpp"
 #include "labyrinth.hpp"
+
 
 //symply takes the shortest path to the player
 std::stack< std::pair<int, int> > blinky_AI(std::pair<int, int> pos, Stage& stage);
@@ -29,5 +32,6 @@ std::stack< std::pair<int, int> > clyde_AI(std::pair<int, int> pos, Stage& stage
 //get last_input and update the position
 std::stack< std::pair<int, int> > pacman_AI(std::pair<int, int> pos, Stage& stage);
 
+std::stack< std::pair<int, int> > bfs(Stage& stage, std::pair<int, int> start, std::pair<int, int> goal);
 
 #endif /* pathfinding_hpp */
