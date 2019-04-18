@@ -32,7 +32,7 @@ public:
     
     SDL_Point get_position();
     std::vector<SDL_Rect> get_colliders();
-    std::pair<int, int> get_current_direction();
+    std::stack<std::pair<int, int>> get_path();
     
     /*
      Updates position: "postion += delta*current_speed"
