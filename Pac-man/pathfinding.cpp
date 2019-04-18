@@ -13,11 +13,141 @@ typedef std::pair<int, int> SquarePos;
 
 using namespace std;
 
+
+//Node structure for bfs/dfs
+struct Node
+{
+    SquarePos previous = {-1, -1};
+};
+
+SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
+{
+    SquarePos unexplored = {-1, -1};
+    
+    //The queue will stock squares to process, the array the results of the processing
+    queue<SquarePos> unexplored_nodes;
+    Node nodes[STAGE_HEIGHT][STAGE_WIDTH];
+    
+    unexplored_nodes.push(start);
+    
+    while(not unexplored_nodes.empty())
+    {
+        SquarePos current = unexplored_nodes.front();
+        unexplored_nodes.pop();
+        
+        if (current.first > 0)
+        {
+            SquarePos candidate = {current.first - 1, current.second};
+            if(not stage.matrix[candidate.first][candidate.second].obstructed)
+            {
+                //if the goal is reached, it is mandatorily by the shortest path
+                //the goal has the way to it updated and the loop is broken
+                if(candidate == goal)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    break;
+                }
+                
+                //if the node is unexplored, it has been reached by the shortest path
+                if (nodes[candidate.first][candidate.second].previous == unexplored)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    unexplored_nodes.push(candidate);
+                }
+            }
+        }
+        if (current.second > 0)
+        {
+            SquarePos candidate = {current.first, current.second - 1};
+            if(not stage.matrix[candidate.first][candidate.second].obstructed)
+            {
+                //if the goal is reached, it is mandatorily by the shortest path
+                //the goal has the way to it updated and the loop is broken
+                if(candidate == goal)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    break;
+                }
+                
+                //if the node is unexplored, it has been reached by the shortest path
+                if (nodes[candidate.first][candidate.second].previous == unexplored)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    unexplored_nodes.push(candidate);
+                }
+            }
+        }
+        if (current.first < STAGE_HEIGHT - 1)
+        {
+            SquarePos candidate = {current.first + 1, current.second};
+            if(not stage.matrix[candidate.first][candidate.second].obstructed)
+            {
+                //if the goal is reached, it is mandatorily by the shortest path
+                //the goal has the way to it updated and the loop is broken
+                if(candidate == goal)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    break;
+                }
+                
+                //if the node is unexplored, it has been reached by the shortest path
+                if (nodes[candidate.first][candidate.second].previous == unexplored)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    unexplored_nodes.push(candidate);
+                }
+            }
+        }
+        if (current.second < STAGE_WIDTH - 1)
+        {
+            SquarePos candidate = {current.first, current.second + 1};
+            if(not stage.matrix[candidate.first][candidate.second].obstructed)
+            {
+                //if the goal is reached, it is mandatorily by the shortest path
+                //the goal has the way to it updated and the loop is broken
+                if(candidate == goal)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    break;
+                }
+                
+                //if the node is unexplored, it has been reached by the shortest path
+                if (nodes[candidate.first][candidate.second].previous == unexplored)
+                {
+                    nodes[candidate.first][candidate.second].previous = current;
+                    unexplored_nodes.push(candidate);
+                }
+            }
+        }
+    }
+    
+    //There was no path to the goal : stay stationnary
+    //!!!!!
+    //Remember to throw an error here
+    //!!!!!
+    if (nodes[goal.first][goal.second].previous == unexplored)
+    {
+        SquareStack path;
+        path.push(start);
+        return path;
+    }
+    
+    
+    SquareStack path;
+    path.push(goal);
+    SquarePos current = nodes[goal.first][goal.second].previous;
+    while(current != start)
+    {
+        if(stage.matrix[current.first][current.second].is_node)
+            path.push(current);
+        current = nodes[current.first][current.second].previous;
+    }
+    return path;
+}
+
 SquareStack blinky_AI(SquarePos pos, Stage& stage)
 {
-    SquareStack stack;
-    
-    return stack;
+    return bfs(stage, pos, stage.entities_positions[0]);
 }
 
 SquareStack pinky_AI(SquarePos pos, Stage& stage)
