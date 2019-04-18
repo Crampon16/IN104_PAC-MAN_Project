@@ -28,14 +28,12 @@ SDL_Point Entity::get_position()
 
 std::vector<SDL_Rect> Entity::get_colliders()
 {
-    if (path.empty())
-        return {-1,-1};
     return colliders;
 }
 
-std::pair<int, int> Entity::get_current_direction()
+std::stack<std::pair<int, int>> Entity::get_path()
 {
-    return path.top();
+    return path;
 }
 
 
