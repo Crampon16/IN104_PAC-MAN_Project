@@ -31,6 +31,12 @@ std::vector<SDL_Rect> Entity::get_colliders()
     return colliders;
 }
 
+std::pair<int, int> Entity::get_current_direction()
+{
+    return path.top();
+}
+
+
 float sign(float n)
 {
     if (n>0) {return 1;}
