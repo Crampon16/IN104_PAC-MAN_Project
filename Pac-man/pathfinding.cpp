@@ -233,6 +233,9 @@ SquareStack pacman_AI(SquarePos pos, Stage& stage)
     //if trying to go through a wall
     if(stage.matrix[current_pos.first + line_movement][current_pos.second + column_movement].obstructed)
     {
+        SquareStack ori_path = stage.entities[0].get_path();
+        if (not ori_path.empty())
+            return ori_path;
         stack.push(pos);
         return stack;
     }
