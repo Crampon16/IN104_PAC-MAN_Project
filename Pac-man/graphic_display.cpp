@@ -64,12 +64,12 @@ void display(SDL_Renderer* renderer, Stage stage)
     SDL_Rect square_outline = {0, 0, SQUARE_SIZE, SQUARE_SIZE};
     SDL_Point square_center = {SQUARE_SIZE/2, SQUARE_SIZE/2};
     
-    for (int i = 0; i < STAGE_WIDTH; ++i)
+    for (int i = 0; i < STAGE_HEIGHT; ++i)
     {
         square_outline.x = 0;
         square_center.x = SQUARE_SIZE/2;
         
-        for (int j = 0; j < STAGE_HEIGHT; ++j)
+        for (int j = 0; j < STAGE_WIDTH; ++j)
         {
             if (stage.matrix[i][j].obstructed)
             {
