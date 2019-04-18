@@ -28,6 +28,8 @@ SDL_Point Entity::get_position()
 
 std::vector<SDL_Rect> Entity::get_colliders()
 {
+    if (path.empty())
+        return {-1,-1};
     return colliders;
 }
 
