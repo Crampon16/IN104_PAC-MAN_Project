@@ -160,45 +160,7 @@ int main(int argv, char** args)
         {
             cout << "Sprite loading complete." << endl;
             
-            //filler code to test the drawing system
-            //usefull template for a Stage creator function...
-            /*
-            Stage stage;
-            for (int i = 0; i < STAGE_HEIGHT; ++i)
-            {
-                vector<Square> temp_vect;
-                stage.matrix.push_back(temp_vect);
-                for (int j = 0; j < STAGE_WIDTH; ++j)
-                {
-                    Square temp_square;
-                    if ( rand()%3 == 0)
-                        temp_square.obstructed = true;
-                    else
-                        temp_square.item = "gum";
-                    
-                    stage.matrix[i].push_back(temp_square);
-                }
-            }
-             */
-            
             Stage stage = init_stage("layout2.txt");
-            Entity pac( {3*SQUARE_SIZE/2, 3*SQUARE_SIZE/2}, 250, std::stack<std::pair<int,int>>() , pacman_AI, 0);
-            stage.entities.push_back(pac);
-            stage.entities_positions.push_back({1,1});
-            
-            Entity blinky( {3*SQUARE_SIZE/2, 3*SQUARE_SIZE/2}, 125, std::stack<std::pair<int,int>>() , blinky_AI, 1);
-            stage.entities.push_back(blinky);
-            stage.entities_positions.push_back({1,1});
-            
-            cout << SDL_GetTicks() << endl;
-            stack<pair<int, int>> path = bfs(stage, {1,1}, {11,11});
-            cout << SDL_GetTicks() << endl;
-            
-            while (not path.empty())
-            {
-                cout << path.top().first << " " << path.top().second << endl;
-                path.pop();
-            }
             
             SDL_Event e;
             bool quit = false;
@@ -221,6 +183,7 @@ int main(int argv, char** args)
                 {
                     stage.entities[i].move(17, stage);
                 }
+                handle_collisions(stage);
                 display(renderer, stage);
                 //cout << "x:" << stage.entities[0].get_position().x << endl;
                 //cout << "y:" << stage.entities[0].get_position().y << endl;
