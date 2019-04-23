@@ -50,7 +50,8 @@ void DrawCircle(SDL_Renderer *Renderer, SDL_Point center, s32 radius)
 void display(SDL_Renderer* renderer, Stage stage)
 {
     //Clear screen
-    SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 );
+    SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 ); //in black
+    //SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0x00 ); //in white
     SDL_RenderClear( renderer );
     
     
@@ -76,6 +77,13 @@ void display(SDL_Renderer* renderer, Stage stage)
                 SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
                 SDL_RenderDrawRect(renderer, &square_outline);
             }
+            if (stage.matrix[i][j].is_node)
+            {
+                SDL_SetRenderDrawColor( renderer, 0x00, 0xFF, 0x00, 0xFF ); //Draw in green
+                SDL_RenderDrawRect(renderer, &square_outline);
+            }
+            
+            
             
             if (stage.matrix[i][j].item == "gum")
             {
@@ -90,12 +98,13 @@ void display(SDL_Renderer* renderer, Stage stage)
     }
     
     
-    //Draw the enities in the stage
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0x00, 0x00, 0xFF ); //Draw in red
-    for(int i = 0; i < stage.entities.size(); ++i)
-    {
-        DrawCircle(renderer, stage.entities[i].get_position(), SQUARE_SIZE/2);
-    }
+    //Draw the entities in the stage
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF ); //Draw in yellow
+    DrawCircle(renderer, stage.entities[0].get_position(), SQUARE_SIZE/2);
+    SDL_SetRenderDrawColor( renderer, 0x88, 0x88, 0xFF, 0xFF ); //Draw in light blue
+    DrawCircle(renderer, stage.entities[1].get_position(), SQUARE_SIZE/2);
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+    DrawCircle(renderer, stage.entities[2].get_position(), SQUARE_SIZE/2);
     
     SDL_RenderPresent( renderer );
 }
