@@ -16,8 +16,9 @@
 #include "entity.hpp"
 #include "labyrinth.hpp"
 
+struct Stage;
 
-//symply takes the shortest path to the player
+//simply takes the shortest path to the player
 std::stack< std::pair<int, int> > blinky_AI(std::pair<int, int> pos, Stage& stage);
 
 //heads towards the player's next node
