@@ -10,12 +10,13 @@
 #define graphic_display_hpp
 
 #include <stdio.h>
+#include <string>
 
 #include "SDL2/SDL.h"
 
 #include "constants.hpp"
 #include "labyrinth.hpp"
 
-void display(SDL_Renderer* renderer, Stage stage);
+void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font);
 
 #endif /* graphic_display_hpp */
