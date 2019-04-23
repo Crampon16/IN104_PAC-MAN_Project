@@ -152,16 +152,18 @@ SquareStack blinky_AI(SquarePos pos, Stage& stage)
 
 SquareStack pinky_AI(SquarePos pos, Stage& stage)
 {
-    SquareStack stack;
+    SquareStack pac_path = stage.entities[0].get_path();
     
-    return stack;
+    return bfs(stage, pos, pac_path.top());
 }
+
 SquareStack inky_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
     
     return stack;
 }
+
 SquareStack clyde_AI(SquarePos pos, Stage& stage)
 {
     SquareStack stack;
