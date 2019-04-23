@@ -8,6 +8,8 @@
 
 #include "graphic_display.hpp"
 
+using namespace std;
+
 //this function courtesy of https://stackoverflow.com/questions/38334081/howto-draw-circles-arcs-and-vector-graphics-in-sdl
 typedef int32_t s32;
 void DrawCircle(SDL_Renderer *Renderer, SDL_Point center, s32 radius)
@@ -47,7 +49,7 @@ void DrawCircle(SDL_Renderer *Renderer, SDL_Point center, s32 radius)
     }
 }
 
-void display(SDL_Renderer* renderer, Stage stage)
+void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font)
 {
     //Clear screen
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 ); //in black
@@ -75,7 +77,7 @@ void display(SDL_Renderer* renderer, Stage stage)
             if (stage.matrix[i][j].obstructed)
             {
                 SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
-                SDL_RenderDrawRect(renderer, &square_outline);
+                SDL_RenderFillRect(renderer, &square_outline);
             }
             if (stage.matrix[i][j].is_node)
             {
@@ -105,6 +107,12 @@ void display(SDL_Renderer* renderer, Stage stage)
     DrawCircle(renderer, stage.entities[1].get_position(), SQUARE_SIZE/2);
     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
     DrawCircle(renderer, stage.entities[2].get_position(), SQUARE_SIZE/2);
+    
+    //Show score and remaining lives
+    string score = "Score: " + to_string(stage.score);
+    string lives = "Lives: " + to_string(stage.lives);
+    font.renderText(0, SCREEN_HEIGHT - 4*SQUARE_SIZE - 10, score);
+    font.renderText(0, SCREEN_HEIGHT - 2*SQUARE_SIZE - 10, lives);
     
     SDL_RenderPresent( renderer );
 }
