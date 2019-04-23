@@ -152,13 +152,18 @@ int main(int argv, char** args)
     {
         cout << "Initialization complete." << endl;
         
+        //game textures
         vector<LTexture*> textures;
         vector<string> file_path;
         file_path.push_back("313596.png");
         
-        if ( loadMedia(textures, file_path, renderer) )
+        LBitmapFont font;
+        LTexture font_texture(renderer);
+        string font_path = "lazyfont_blanc.png";
+        
+        if ( loadMedia(textures, file_path, renderer) and loadFont(&font_texture, &font, font_path))
         {
-            cout << "Sprite loading complete." << endl;
+            cout << "Sprite and font loading complete." << endl;
             
             Stage stage = init_stage("layout2.txt");
             
@@ -184,7 +189,7 @@ int main(int argv, char** args)
                     stage.entities[i].move(17, stage);
                 }
                 handle_collisions(stage);
-                display(renderer, stage);
+                display(renderer, stage, font);
                 //cout << "x:" << stage.entities[0].get_position().x << endl;
                 //cout << "y:" << stage.entities[0].get_position().y << endl;
                 
