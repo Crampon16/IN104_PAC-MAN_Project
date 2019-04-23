@@ -24,45 +24,36 @@
 
 class Entity;
 
-enum entity_state
-{
-    NORMAL,
-    KILLER,
-    AFRAID,
-    DEAD
-};
-
 //A Stage is composed of a matrix of Squares
 struct Square
 {
     bool obstructed = false;
     bool is_node = false;
-    
+
     bool is_tunnel = false;
     int tunnel_target_line = -1;
     int tunnel_target_column = -1;
-    
+
     std::string item = "";
-    
+
     std::vector<std::string> entities;
 };
 
 struct Stage
 {
     std::vector<std::vector<Square>> matrix;
-    
+
     //Allows pathfinding functions to quickly locate some positions
     std::vector<std::pair<int, int>> entities_positions;
     std::vector<std::pair<int, int>> entities_spawn_point;
     std::vector<std::pair<int, int>> entities_spawn_direction;
     std::vector<Entity> entities;
-    
+
     //these variables characterize what state the game is in
     char last_key_input;
     Uint32 killer_mode_start;
-    std::vector<entity_state> states = {NORMAL, NORMAL, NORMAL, NORMAL, NORMAL};
     int lives = 3;
-    
+
     int score = 0;
 };
 
