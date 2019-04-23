@@ -1,9 +1,7 @@
 //
 //  time_wrapper.cpp
-//  enstaroid
+//  pac-man
 //
-//  Created by Liam Rampon on 20/01/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
 //
 
 #include "time_wrapper.hpp"
