@@ -31,9 +31,14 @@ public:
            std::stack<std::pair<int,int> > (*path_finder)(std::pair<int, int>, Stage&), int Id);
     
     SDL_Point get_position();
-    std::vector<SDL_Rect> get_colliders();
-    std::stack<std::pair<int, int>> get_path();
+    void set_position(std::pair<int, int> square, Stage& stage);
+    void set_position(SDL_Point pos, Stage& stage);
     
+    std::vector<SDL_Rect> get_colliders();
+    
+    std::stack<std::pair<int, int>> get_path();
+    void set_path(std::stack<std::pair<int,int>> path);
+
     /*
      Updates position: "postion += delta*current_speed"
      delta is measured in milliseconds.
@@ -48,7 +53,6 @@ public:
      */
     void find_path(Stage& stage);
     
-    //Yeah that's ugly.
     void set_path_finding(std::stack<std::pair<int,int> > (*path_finder)(std::pair<int, int>, Stage&));
     
 private:
