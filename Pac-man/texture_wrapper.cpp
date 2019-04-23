@@ -1,9 +1,8 @@
 //
 //  texture_wrapper.cpp
-//  enstaroid
+//  pac-man
 //
-//  Created by Liam Rampon on 19/01/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
+//  
 //
 
 #include "texture_wrapper.hpp"
