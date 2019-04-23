@@ -19,20 +19,18 @@
 struct Stage;
 
 //simply takes the shortest path to the player
-std::stack< std::pair<int, int> > blinky_AI(std::pair<int, int> pos, Stage& stage);
+std::stack< std::pair<int, int> > blinky_AI(int id, std::pair<int, int> pos, Stage& stage);
 
 //heads towards the player's next node
-std::stack< std::pair<int, int> > pinky_AI(std::pair<int, int> pos, Stage& stage);
+std::stack< std::pair<int, int> > pinky_AI(int id, std::pair<int, int> pos, Stage& stage);
 
 //heads towards the node nearest to the intersection of pac man's direction and blinky's direction
-std::stack< std::pair<int, int> > inky_AI(std::pair<int, int> pos, Stage& stage);
+std::stack< std::pair<int, int> > inky_AI(int id, std::pair<int, int> pos, Stage& stage);
 
 //heads towards pac-man, or go away if too close of him
-std::stack< std::pair<int, int> > clyde_AI(std::pair<int, int> pos, Stage& stage);
+std::stack< std::pair<int, int> > clyde_AI(int id, std::pair<int, int> pos, Stage& stage);
 
 //get last_input and update the position
-std::stack< std::pair<int, int> > pacman_AI(std::pair<int, int> pos, Stage& stage);
-
-std::stack< std::pair<int, int> > bfs(Stage& stage, std::pair<int, int> start, std::pair<int, int> goal);
+std::stack< std::pair<int, int> > pacman_AI(int id, std::pair<int, int> pos, Stage& stage);
 
 #endif /* pathfinding_hpp */
