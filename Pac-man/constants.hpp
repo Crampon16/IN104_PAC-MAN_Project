@@ -17,7 +17,7 @@ const int SQUARE_SIZE = 20;
 
 //in pixels
 const int SCREEN_WIDTH = SQUARE_SIZE*STAGE_WIDTH;
-const int SCREEN_HEIGHT = SQUARE_SIZE*STAGE_HEIGHT;
+const int SCREEN_HEIGHT = SQUARE_SIZE*STAGE_HEIGHT + 4*SQUARE_SIZE;
 
 const int pac_man_id = 0;
 
