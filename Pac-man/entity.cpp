@@ -10,16 +10,20 @@
 
 using namespace std;
 
-Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std::stack<std::pair<int,int> > (*paff_finder)(std::pair<int, int>, Stage&), int ID)
+Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std::stack<std::pair<int,int> > (*paff_finder)(int, std::pair<int, int>, Stage&), int ID)
 {
     position = pos;
+    
     speed = spd;
+    
     path = paff;
     if (path.empty())
     {
         path.push({pos.y/SQUARE_SIZE, pos.x/SQUARE_SIZE});
     }
     path_finder = paff_finder;
+    previous_square = path.top();
+    
     Id = ID;
     state = NORMAL;
 }
@@ -41,6 +45,11 @@ void Entity::set_position(SDL_Point pos, Stage& stage)
     position = pos;
     stage.entities_positions[Id].first = pos.y/SQUARE_SIZE + SQUARE_SIZE/2;
     stage.entities_positions[Id].second = pos.x/SQUARE_SIZE + SQUARE_SIZE/2;
+}
+
+std::pair<int, int> Entity::get_previous_square()
+{
+    return previous_square;
 }
 
 std::vector<SDL_Rect> Entity::get_colliders()
@@ -78,29 +87,32 @@ void Entity::move(int delta, Stage& stage)
 {
     SDL_Point target_position;
     std::pair<int,int> target_square = path.top();
-
+    
     target_position.x = target_square.second*SQUARE_SIZE + SQUARE_SIZE/2;
     target_position.y = target_square.first*SQUARE_SIZE + SQUARE_SIZE/2;
-
+    
     //in this case the entity is stationnary
     if(target_position.x == position.x and target_position.y == position.y)
     {
         path.pop();
         if (path.empty())
-            find_path(stage);
-        else if(stage.matrix[path.top().first][path.top().second].is_node)
         {
             find_path(stage);
+            previous_square = target_square;
         }
+        /*else if(stage.matrix[path.top().first][path.top().second].is_node)
+        {
+            find_path(stage);
+        }*/
     }
     else
     {
         SDL_Point direction;
         direction.x = target_position.x - position.x;
         direction.y = target_position.y - position.y;
-
+        
         float norm = sqrt(direction.x*direction.x + direction.y*direction.y);
-
+        
         //if the movement would reach beyond the target
         if (norm <= speed*delta/1000)
         {
@@ -110,11 +122,13 @@ void Entity::move(int delta, Stage& stage)
             if (path.empty())
             {
                 find_path(stage);
+                previous_square = target_square;
+
             }
-            else if(stage.matrix[path.top().first][path.top().second].is_node)
+            /*else if(stage.matrix[path.top().first][path.top().second].is_node)
             {
                 find_path(stage);
-            }
+            }*/
         }
         else
         {
@@ -122,10 +136,10 @@ void Entity::move(int delta, Stage& stage)
             position.y += direction.y*speed*delta/norm/1000;
             stage.entities_positions[Id] = get_square_position(position);
         }
-
+        
 
     }
-
+    
 }
 
 void Entity::find_path(Stage& stage)
@@ -133,11 +147,11 @@ void Entity::find_path(Stage& stage)
     std::pair<int, int> square;
     square.first = position.y / SQUARE_SIZE;
     square.second = position.x / SQUARE_SIZE;
-
-    path = path_finder(square, stage);
+    
+    path = path_finder(Id, square, stage);
 }
 
-void Entity::set_path_finding(std::stack<std::pair<int,int> > (*paff_finder)(std::pair<int, int>, Stage&))
+void Entity::set_path_finding(std::stack<std::pair<int,int> > (*paff_finder)(int id, std::pair<int, int>, Stage&))
 {
     path_finder = paff_finder;
 }
