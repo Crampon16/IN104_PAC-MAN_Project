@@ -8,6 +8,8 @@
 
 #include "entity.hpp"
 
+using namespace std;
+
 Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std::stack<std::pair<int,int> > (*paff_finder)(std::pair<int, int>, Stage&), int ID)
 {
     position = pos;
@@ -15,7 +17,7 @@ Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std
     path = paff;
     if (path.empty())
     {
-        path.push({pos.x/SQUARE_SIZE, pos.y/SQUARE_SIZE});
+        path.push({pos.y/SQUARE_SIZE, pos.x/SQUARE_SIZE});
     }
     path_finder = paff_finder;
     Id = ID;
@@ -26,6 +28,20 @@ SDL_Point Entity::get_position()
     return position;
 }
 
+void Entity::set_position(pair<int, int> square, Stage& stage)
+{
+    position.x = square.second*SQUARE_SIZE + SQUARE_SIZE/2;
+    position.y = square.first*SQUARE_SIZE + SQUARE_SIZE/2;
+    stage.entities_positions[Id] = square;
+}
+
+void Entity::set_position(SDL_Point pos, Stage& stage)
+{
+    position = pos;
+    stage.entities_positions[Id].first = pos.y/SQUARE_SIZE + SQUARE_SIZE/2;
+    stage.entities_positions[Id].second = pos.x/SQUARE_SIZE + SQUARE_SIZE/2;
+}
+
 std::vector<SDL_Rect> Entity::get_colliders()
 {
     return colliders;
@@ -34,6 +50,11 @@ std::vector<SDL_Rect> Entity::get_colliders()
 std::stack<std::pair<int, int>> Entity::get_path()
 {
     return path;
+}
+
+void Entity::set_path(stack<pair<int,int>> path)
+{
+    this->path = path;
 }
 
 
