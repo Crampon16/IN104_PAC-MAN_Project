@@ -302,20 +302,16 @@ SquareStack scatter_AI(int id, Stage& stage)
     switch (id)
     {
         case 1:
-            path.push({0,0});
-            return path;
+            return nearest_square(stage, stage.entities_positions[id], {0,0}, stage.entities[id].get_previous_square());
             break;
         case 2:
-            path.push({STAGE_HEIGHT,0});
-            return path;
+            return nearest_square(stage, stage.entities_positions[id], {STAGE_HEIGHT,0}, stage.entities[id].get_previous_square());
             break;
         case 3:
-            path.push({0,STAGE_WIDTH});
-            return path;
+            return nearest_square(stage, stage.entities_positions[id], {0,STAGE_WIDTH}, stage.entities[id].get_previous_square());
             break;
         case 4:
-            path.push({STAGE_HEIGHT,STAGE_WIDTH});
-            return path;
+            return nearest_square(stage, stage.entities_positions[id], {STAGE_HEIGHT,STAGE_WIDTH}, stage.entities[id].get_previous_square());
             break;
         default:
             path.push(stage.entities_positions[id]);
