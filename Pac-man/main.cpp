@@ -20,6 +20,8 @@
 #include "pathfinding.hpp"
 #include "controller.hpp"
 
+#include "level_handler.hpp"
+
 using namespace std;
 
 bool init(SDL_Window** window, SDL_Renderer** renderer)
@@ -165,36 +167,9 @@ int main(int argv, char** args)
         {
             cout << "Sprite and font loading complete." << endl;
             
-            Stage stage = init_stage("layout2.txt");
+            string layout = "layout2.txt";
             
-            SDL_Event e;
-            bool quit = false;
-            
-            
-            FPSCapper cap(60);
-            
-            while( !quit )
-            {
-                cap.start();
-                while (SDL_PollEvent( &e ) != 0)
-                {
-                    if(e.type == SDL_QUIT)
-                    {
-                        quit = true;
-                    }
-                    get_keyboard_input(stage, e);
-                }
-                for (int i = 0; i < stage.entities.size(); ++i)
-                {
-                    stage.entities[i].move(17, stage);
-                }
-                handle_collisions(stage);
-                display(renderer, stage, font);
-                //cout << "x:" << stage.entities[0].get_position().x << endl;
-                //cout << "y:" << stage.entities[0].get_position().y << endl;
-                
-                cap.cap();
-            }
+            classic_level(layout, renderer, textures, font);
             
             close(window, renderer, textures);
         }
