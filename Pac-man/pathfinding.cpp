@@ -20,6 +20,9 @@ struct Node
     SquarePos previous = {-1, -1};
 };
 
+
+//pathfinding functions
+
 SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
 {
     SquarePos unexplored = {-1, -1};
@@ -90,7 +93,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
                     break;
                 }
                 
-                //if the node is unexplored, it has been reached by the shortest path
+                //if the node  is unexplored, it has been reached by the shortest path
                 if (nodes[candidate.first][candidate.second].previous == unexplored)
                 {
                     nodes[candidate.first][candidate.second].previous = current;
@@ -138,8 +141,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
     SquarePos current = nodes[goal.first][goal.second].previous;
     while(current != start)
     {
-        //if(stage.matrix[current.first][current.second].is_node)
-            path.push(current);
+        path.push(current);
         current = nodes[current.first][current.second].previous;
     }
     return path;
@@ -152,6 +154,13 @@ int square_distance(SquarePos square1, SquarePos square2)
 
 SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, SquarePos previous)
 {
+    if (stage.matrix[start.first][start.second].go_up)
+    {
+        SquareStack path;
+        path.push({start.first - 1, start.second});
+        return path;
+    }
+    
     SquareStack candidates;
     candidates.push({start.first - 1, start.second});
     candidates.push({start.first + 1, start.second});
@@ -164,8 +173,9 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
     while (not found_first)
     {
         SquarePos candidate = candidates.top();
-        //valid square to go to
-        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed)
+        //valid square to go to: no wall and not going on a up-square from the top
+        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed
+            and not (candidate.first - start.first == 1 and stage.matrix[candidate.first][candidate.second].go_up))
         {
             found_first = true;
             best = candidate;
@@ -178,7 +188,8 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
     {
         SquarePos candidate = candidates.top();
         //valid square to go to
-        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed)
+        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed
+            and not (candidate.first - start.first == 1 and stage.matrix[candidate.first][candidate.second].go_up))
         {
             //compare distance to goal
             if (square_distance(goal, best) > square_distance(goal, candidate))
@@ -194,154 +205,145 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
     return path;
 }
 
-//dummied out version using bfs
-/*
-SquareStack blinky_AI2(int id, SquarePos pos, Stage& stage)
+SquareStack farthest_square(Stage& stage, SquarePos start, SquarePos goal, SquarePos previous)
 {
-    return bfs(stage, pos, stage.entities_positions[0]);
-}*/
-
-SquareStack blinky_AI(int id, SquarePos pos, Stage& stage)
-{
+    if (stage.matrix[start.first][start.second].go_up)
+    {
+        SquareStack path;
+        path.push({start.first - 1, start.second});
+        return path;
+    }
     
-    return nearest_square(stage, pos, stage.entities_positions[0], stage.entities[id].get_previous_square());
+    SquareStack candidates;
+    candidates.push({start.first - 1, start.second});
+    candidates.push({start.first + 1, start.second});
+    candidates.push({start.first, start.second - 1});
+    candidates.push({start.first, start.second + 1});
+    
+    //find first element of stack that can be gone through
+    SquarePos best;
+    bool found_first = false;
+    while (not found_first)
+    {
+        SquarePos candidate = candidates.top();
+        //valid square to go to
+        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed
+            and not (candidate.first - start.first == 1 and stage.matrix[candidate.first][candidate.second].go_up))
+        {
+            found_first = true;
+            best = candidate;
+        }
+        candidates.pop();
+    }
+    
+    //compare valid elements to find the best, euclidean distance wise
+    while (not candidates.empty())
+    {
+        SquarePos candidate = candidates.top();
+        //valid square to go to
+        if (candidate != previous and not stage.matrix[candidate.first][candidate.second].obstructed
+            and not (candidate.first - start.first == 1 and stage.matrix[candidate.first][candidate.second].go_up))
+        {
+            //compare distance to goal
+            if (square_distance(goal, best) < square_distance(goal, candidate))
+            {
+                best = candidate;
+            }
+        }
+        candidates.pop();
+    }
+    
+    SquareStack path;
+    path.push(best);
+    return path;
 }
 
-//dummied out version using bfs
-/*
-SquareStack pinky_AI2(int id, SquarePos pos, Stage& stage)
-{
-    SquareStack pac_path = stage.entities[0].get_path();
-    
-    return bfs(stage, pos, pac_path.top());
-}*/
 
-SquareStack pinky_AI(int id, SquarePos pos, Stage& stage)
+
+
+//normal AIs of the ghosts
+
+SquareStack blinky_AI(int id, Stage& stage)
+{
+    return nearest_square(stage, stage.entities_positions[id], stage.entities_positions[0], stage.entities[id].get_previous_square());
+}
+
+SquareStack pinky_AI(int id, Stage& stage)
 {
     SquarePos base = stage.entities_positions[0], prev = stage.entities[0].get_previous_square();
     SquarePos offset = {4*(base.first - prev.first), 4*(base.second - prev.second)};
     SquarePos goal = {base.first + offset.first, base.second + offset.second};
     
-    return nearest_square(stage, pos, goal, stage.entities[id].get_previous_square());
+    return nearest_square(stage, stage.entities_positions[id], goal, stage.entities[id].get_previous_square());
 }
 
-SquareStack inky_AI(int id, SquarePos pos, Stage& stage)
+SquareStack inky_AI(int id, Stage& stage)
 {
     SquareStack stack;
     
     return stack;
 }
 
-SquareStack clyde_AI(int id, SquarePos pos, Stage& stage)
+SquareStack clyde_AI(int id, Stage& stage)
 {
     SquareStack stack;
     
     return stack;
 }
 
-//basic AI for testing : only goes one way, and stops at the edge of the stage
-SquareStack pacman_AI2(int id, SquarePos pos, Stage& stage)
+
+
+//AIs for frightened or dead ghosts
+
+SquareStack scatter_AI(int id, Stage& stage)
 {
-    SquareStack stack;
-    char input = stage.last_key_input;
-    
-    switch (input)
+    //scatter points are the edges of the stage
+    SquareStack path;
+    switch (id)
     {
-        case 'z':
-            stack.push({0,stage.entities_positions[0].second});
+        case 1:
+            path.push({0,0});
+            return path;
             break;
-        case 'q':
-            stack.push({stage.entities_positions[0].first,0});
+        case 2:
+            path.push({STAGE_HEIGHT,0});
+            return path;
             break;
-        case 's':
-            stack.push({STAGE_HEIGHT-1,stage.entities_positions[0].second});
+        case 3:
+            path.push({0,STAGE_WIDTH});
+            return path;
             break;
-        case 'd':
-            stack.push({stage.entities_positions[0].first,STAGE_WIDTH-1});
+        case 4:
+            path.push({STAGE_HEIGHT,STAGE_WIDTH});
+            return path;
             break;
-        
         default:
-            stack.push({stage.entities_positions[0].first,stage.entities_positions[0].second});
+            path.push(stage.entities_positions[id]);
+            return path;
             break;
     }
-    
-    stage.last_key_input = 0;
+}
+
+SquareStack escape_AI(int id, Stage& stage)
+{
+    return farthest_square(stage, stage.entities_positions[id], stage.entities_positions[0], stage.entities[id].get_previous_square());
+}
+
+SquareStack death_AI(int id, Stage& stage)
+{
+    SquareStack stack;
+    stack.push(stage.entities_spawn_direction[id]);
     return stack;
 }
 
-SquareStack pacman_AI3(int id, SquarePos pos, Stage& stage)
+
+
+//AI of the player avatar
+
+SquareStack pacman_AI(int id, Stage& stage)
 {
     SquareStack stack;
-    SquarePos current_pos = pos;
-    
-    char input = stage.last_key_input;
-    int line_movement = 0, column_movement = 0;
-    
-    switch (input)
-    {
-        case 'z':
-            line_movement = -1;
-            break;
-        case 'q':
-            column_movement = -1;
-            break;
-        case 's':
-            line_movement = 1;
-            break;
-        case 'd':
-            column_movement = 1;
-            break;
-            
-        default:
-            stack.push(pos);
-            return stack;
-            break;
-    }
-    
-
-    
-    //if trying to go through a wall
-    if(stage.matrix[current_pos.first + line_movement][current_pos.second + column_movement].obstructed)
-    {
-        SquareStack ori_path = stage.entities[0].get_path();
-        if (not ori_path.empty())
-            return ori_path;
-        stack.push(pos);
-        return stack;
-    }
-    
-    //stack.push({current_pos.first + line_movement, current_pos.second + column_movement});
-    //return stack;
-    
-    SquareStack temp_stack;
-    while (not stage.matrix[current_pos.first + line_movement][current_pos.second + column_movement].obstructed)
-    {
-        current_pos.first += line_movement;
-        current_pos.second += column_movement;
-        
-        if(stage.matrix[current_pos.first][current_pos.second].is_node)
-            temp_stack.push(current_pos);
-        
-        // !!!!!!!
-        //TODO: Add a control to avoir infinite loops
-        // !!!!!!!
-    }
-    //transfer one stack into the other
-    while (not temp_stack.empty())
-    {
-        stack.push(temp_stack.top());
-        temp_stack.pop();
-    }
-    
-    if (stack.size() == 1) //if there is a node in the way, preserve the chosen direction
-        stage.last_key_input = 0;
-    return stack;
-}
-
-SquareStack pacman_AI(int id, SquarePos pos, Stage& stage)
-{
-    SquareStack stack;
-    SquarePos current_pos = pos;
+    SquarePos current_pos = stage.entities_positions[id];
     
     char input = stage.last_key_input;
     int line_movement = 0, column_movement = 0;
