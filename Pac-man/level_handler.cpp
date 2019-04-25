@@ -17,8 +17,9 @@ void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> text
     SDL_Event e;
     bool quit = false;
     
-    
     FPSCapper cap(60);
+    
+    stage.killer_mode_start = 0;
     
     while( !quit )
     {
@@ -42,6 +43,9 @@ void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> text
         
         if(stage.lives == -1)
             quit = true;
+        
+        //cout << (stage.entities[1].state == AFRAID) << (stage.entities[1].state == DEAD) << endl;
+        //cout << (stage.entities[2].state == AFRAID) << (stage.entities[2].state == DEAD) << endl;
         
         cap.cap();
     }
@@ -67,7 +71,10 @@ void handle_collisions(Stage& stage)
         stage.killer_mode_start = SDL_GetTicks();
         for (int i = 1; i <= stage.entities.size(); ++i)
         {
+            //put ghost in afraid state, make him flee pac, and reverse its current direction
             stage.entities[i].state = AFRAID;
+            stage.entities[i].set_path_finding(escape_AI);
+            stage.entities[i].set_previous_square(stage.entities_positions[i]);
         }
         
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
@@ -100,7 +107,7 @@ void handle_collisions(Stage& stage)
                     break;
                 }
                 
-                    //in this case, the ghost dies
+                //in this case, the ghost dies
                 case AFRAID:
                 {
                     //put the ghost in the dead state and increase score
@@ -127,12 +134,30 @@ void handle_collisions(Stage& stage)
 
 void handle_AIs(Stage& stage)
 {
-    for (int i = 0; i <= 4; ++i)
+    //only ghosts need an AI change
+    for (int i = 1; i <= 4; ++i)
     {
+        //if a dead ghost reached its spawn
         if (stage.entities[i].state == DEAD and stage.entities_positions[i] == stage.entities_spawn_point[i])
         {
             stage.entities[i].state = NORMAL;
             stage.entities[i].set_speed(75);
+        }
+        else
+        {
+            //killer mode only lasts for 5s
+            if(stage.entities[i].state == AFRAID and SDL_GetTicks() - stage.killer_mode_start > 5000)
+            {
+                stage.entities[i].state = NORMAL;
+                stage.entities[i].set_path_finding(stage.normal_pathfinder[i]);
+            }
+            
+            //every 5s, ghosts enter chase mode for 15s, before scattering again for 5s and so on
+            if (SDL_GetTicks() % 20000 < 5000)
+                stage.entities[i].set_path_finding(scatter_AI);
+            else
+                stage.entities[i].set_path_finding(stage.normal_pathfinder[i]);
+
         }
     }
 }
