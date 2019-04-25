@@ -124,6 +124,7 @@ Stage init_stage(string path)
     stack<pair<int, int>> pink_path;
     pink_path.push({stage.entities_spawn_point[2]});
 
+    stage.normal_pathfinder = {pacman_AI, blinky_AI, pinky_AI};
     
     Entity pac( {SQUARE_SIZE/2 + stage.entities_spawn_point[0].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[0].first*SQUARE_SIZE}, 150, pac_path , pacman_AI, 0);
     stage.entities.push_back(pac);
