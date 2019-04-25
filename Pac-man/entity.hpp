@@ -36,11 +36,13 @@ class Entity
 public:
     
     Entity(SDL_Point position, int speed, std::stack<std::pair<int,int> > path,
-           std::stack<std::pair<int,int> > (*path_finder)(int, std::pair<int, int>, Stage&), int Id);
+           std::stack<std::pair<int,int> > (*path_finder)(int, Stage&), int Id);
     
     SDL_Point get_position();
     void set_position(std::pair<int, int> square, Stage& stage);
     void set_position(SDL_Point pos, Stage& stage);
+    
+    void set_speed(int sp);
     
     std::pair<int, int> get_previous_square();
     
@@ -65,7 +67,7 @@ public:
     */
     void find_path(Stage& stage);
     
-    void set_path_finding(std::stack<std::pair<int,int> > (*path_finder)(int, std::pair<int, int>, Stage&));
+    void set_path_finding(std::stack<std::pair<int,int> > (*path_finder)(int, Stage&));
     
 private:
     
@@ -93,7 +95,7 @@ private:
      empties path then fills it with the new steps to take.
      This is where Entities get different behaviours.
      */
-    std::stack<std::pair<int,int> > (*path_finder)(int id, std::pair<int, int>, Stage&);
+    std::stack<std::pair<int,int> > (*path_finder)(int id, Stage&);
     
     
 };
