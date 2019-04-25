@@ -57,6 +57,13 @@ std::pair<int, int> Entity::get_previous_square()
     return previous_square;
 }
 
+void Entity::set_previous_square(pair<int,int> square)
+{
+    previous_square = square;
+}
+
+
+
 std::vector<SDL_Rect> Entity::get_colliders()
 {
     return colliders;
