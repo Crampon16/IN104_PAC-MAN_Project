@@ -48,11 +48,14 @@ struct Stage
     std::vector<std::pair<int, int>> entities_positions;
     std::vector<std::pair<int, int>> entities_spawn_point;
     std::vector<std::pair<int, int>> entities_spawn_direction;
+    std::vector< std::stack<std::pair<int, int>> (*)(int, Stage&)> normal_pathfinder;
     std::vector<Entity> entities;
     
     //these variables characterize what state the game is in
     char last_key_input;
+    
     Uint32 killer_mode_start;
+    
     int lives = 3;
     
     int score = 0;
