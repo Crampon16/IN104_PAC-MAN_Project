@@ -10,7 +10,7 @@
 
 using namespace std;
 
-Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std::stack<std::pair<int,int> > (*paff_finder)(int, std::pair<int, int>, Stage&), int ID)
+Entity::Entity(SDL_Point pos, int spd, std::stack<std::pair<int,int> > paff, std::stack<std::pair<int,int> > (*paff_finder)(int, Stage&), int ID)
 {
     position = pos;
     
@@ -45,6 +45,11 @@ void Entity::set_position(SDL_Point pos, Stage& stage)
     position = pos;
     stage.entities_positions[Id].first = pos.y/SQUARE_SIZE + SQUARE_SIZE/2;
     stage.entities_positions[Id].second = pos.x/SQUARE_SIZE + SQUARE_SIZE/2;
+}
+
+void Entity::set_speed(int sp)
+{
+    speed = sp;
 }
 
 std::pair<int, int> Entity::get_previous_square()
@@ -148,10 +153,10 @@ void Entity::find_path(Stage& stage)
     square.first = position.y / SQUARE_SIZE;
     square.second = position.x / SQUARE_SIZE;
     
-    path = path_finder(Id, square, stage);
+    path = path_finder(Id, stage);
 }
 
-void Entity::set_path_finding(std::stack<std::pair<int,int> > (*paff_finder)(int id, std::pair<int, int>, Stage&))
+void Entity::set_path_finding(std::stack<std::pair<int,int> > (*paff_finder)(int id, Stage&))
 {
     path_finder = paff_finder;
 }
