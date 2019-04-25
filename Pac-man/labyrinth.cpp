@@ -45,7 +45,7 @@ Stage init_stage(string path)
     }
     string buffer;
     vector<string> params;
-
+    
     int i = 0;
     while ( getline(stream, buffer) )
     {
@@ -53,6 +53,7 @@ Stage init_stage(string path)
         {
             switch (buffer[j])
             {
+
                 case 'X': //a wall
                     stage.matrix[i][j].obstructed = true;
                     break;
@@ -69,6 +70,10 @@ Stage init_stage(string path)
                 case 'M': //a node without gum
                     stage.matrix[i][j].is_node = true;
                     break;
+                case 'U': //a square where you can only go up, and only enter by the sides or the lower half
+                    stage.matrix[i][j].go_up = true;
+                    break;
+                
                     //every spawn point (and spawn direction) is a node
                 case 'S': //pac-man's spawn AND spawn direction
                     stage.entities_spawn_point[0] = {i,j};
@@ -103,87 +108,36 @@ Stage init_stage(string path)
                     stage.entities_spawn_direction[4] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-
-
+                    
+                    
                 default:
                     break;
             }
         }
         ++i;
     }
-
+    
     stack<pair<int, int>> pac_path;
-    pac_path.push({stage.entities_spawn_direction[0]});
+    pac_path.push({stage.entities_spawn_point[0]});
     stack<pair<int, int>> blink_path;
-    blink_path.push({stage.entities_spawn_direction[1]});
+    blink_path.push({stage.entities_spawn_point[1]});
     stack<pair<int, int>> pink_path;
-    pink_path.push({stage.entities_spawn_direction[2]});
+    pink_path.push({stage.entities_spawn_point[2]});
 
-
+    
     Entity pac( {SQUARE_SIZE/2 + stage.entities_spawn_point[0].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[0].first*SQUARE_SIZE}, 150, pac_path , pacman_AI, 0);
     stage.entities.push_back(pac);
     stage.entities_positions.push_back(stage.entities_spawn_point[0]);
-
+    
     Entity blinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[1].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[1].first*SQUARE_SIZE}, 75, blink_path , blinky_AI, 1);
     stage.entities.push_back(blinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[1]);
-
+    
     Entity pinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[2].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[2].first*SQUARE_SIZE}, 75, pink_path , pinky_AI, 2);
     stage.entities.push_back(pinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[2]);
-
+    
     return stage;
 }
 
-void handle_collisions(Stage& stage)
-{
-    //there can only be one gum touched by pac at a given time
-    pair<int, int> pac_pos = stage.entities_positions[0];
-    if(stage.matrix[pac_pos.first][pac_pos.second].item == "gum")
-    {
-        stage.score += 10;
-        stage.matrix[pac_pos.first][pac_pos.second].item = "";
-        cout << stage.score << endl;
-    }
 
-    if(stage.matrix[pac_pos.first][pac_pos.second].item == "super_gum")
-    {
-        stage.score += 100;
-
-        //enter killer mode
-        stage.entities[0].state = KILLER;
-        stage.killer_mode_start = SDL_GetTicks();
-        for (int i = 1; i <= stage.entities.size(); ++i)
-        {
-            stage.entities[i].state = AFRAID;
-        }
-
-        stage.matrix[pac_pos.first][pac_pos.second].item = "";
-        cout << stage.score << endl;
-    }
-
-
-
-    for (int i = 1; i <= 4; ++i)
-    {
-        if (stage.entities_positions[0] == stage.entities_positions[i])
-        {
-            stack<pair<int, int>> pac_path, blink_path, pink_path;
-            pac_path.push(stage.entities_spawn_direction[0]);
-            blink_path.push({stage.entities_spawn_direction[1]});
-            pink_path.push({stage.entities_spawn_direction[2]});
-
-            stage.entities[0].set_position(stage.entities_spawn_point[0], stage);
-            stage.entities[0].set_path(pac_path);
-            stage.entities[1].set_position(stage.entities_spawn_point[1], stage);
-            stage.entities[1].set_path(blink_path);
-            stage.entities[2].set_position(stage.entities_spawn_point[2], stage);
-            stage.entities[2].set_path(pink_path);
-
-            stage.last_key_input = ' ';
-            --stage.lives;
-
-            break;
-        }
-    }
-}
