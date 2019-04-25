@@ -44,6 +44,7 @@ public:
     
     void set_speed(int sp);
     
+    void set_previous_square(std::pair<int, int> square);
     std::pair<int, int> get_previous_square();
     
     std::vector<SDL_Rect> get_colliders();
