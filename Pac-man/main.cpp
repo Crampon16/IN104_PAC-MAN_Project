@@ -157,7 +157,8 @@ int main(int argv, char** args)
         //game textures
         vector<LTexture*> textures;
         vector<string> file_path;
-        file_path.push_back("313596.png");
+        file_path.push_back("pac_sprites.png");
+        
         
         LBitmapFont font;
         LTexture font_texture(renderer);
@@ -167,6 +168,16 @@ int main(int argv, char** args)
         {
             cout << "Sprite and font loading complete." << endl;
             
+            //this codes shows the picture stocked at textures[0]
+            /*the full function prototype is available in texture_wrapper.hpp, and allows to render the picture:
+             - partially using an SDL_Rect (clip is the area on the picture that will be rendered)
+             - rotated by an angle in degrees using a double and an SDL_Point for rotation center
+             - flipped using enum values
+            */
+             
+             
+            textures[0]->render({0,0});
+
             string layout = "layout2.txt";
             
             classic_level(layout, renderer, textures, font);
