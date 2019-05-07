@@ -1,3 +1,4 @@
+
 //
 //  level_handler.cpp
 //  Pac-man
@@ -10,17 +11,19 @@
 
 using namespace std;
 
-void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> textures, LBitmapFont& font)
+void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font)
 {
+
     Stage stage = init_stage(layout);
-    
+
+
     SDL_Event e;
     bool quit = false;
-    
+
     FPSCapper cap(60);
-    
+
     stage.killer_mode_start = 0;
-    
+
     while( !quit )
     {
         cap.start();
@@ -39,15 +42,16 @@ void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> text
         }
         handle_collisions(stage);
         handle_AIs(stage);
-        display(renderer, stage, font);
-        
+        display(renderer, stage, font, textures);
+
         if(stage.lives == -1)
             quit = true;
-        
+
         //cout << (stage.entities[1].state == AFRAID) << (stage.entities[1].state == DEAD) << endl;
         //cout << (stage.entities[2].state == AFRAID) << (stage.entities[2].state == DEAD) << endl;
-        
+
         cap.cap();
+
     }
 }
 
@@ -60,12 +64,12 @@ void handle_collisions(Stage& stage)
         stage.score += 10;
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
     }
-    
+
     // pac/super-gum collision
     if(stage.matrix[pac_pos.first][pac_pos.second].item == "super_gum")
     {
         stage.score += 100;
-        
+
         //enter killer mode
         stage.entities[0].state = KILLER;
         stage.killer_mode_start = SDL_GetTicks();
@@ -76,10 +80,10 @@ void handle_collisions(Stage& stage)
             stage.entities[i].set_path_finding(escape_AI);
             stage.entities[i].set_previous_square(stage.entities_positions[i]);
         }
-        
+
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
     }
-    
+
     // pac/ghost collision
     for (int i = 1; i <= 4; ++i)
     {
@@ -94,19 +98,19 @@ void handle_collisions(Stage& stage)
                     pac_path.push(stage.entities_spawn_point[0]);
                     blink_path.push({stage.entities_spawn_point[1]});
                     pink_path.push({stage.entities_spawn_point[2]});
-                    
+
                     stage.entities[0].set_position(stage.entities_spawn_point[0], stage);
                     stage.entities[0].set_path(pac_path);
                     stage.entities[1].set_position(stage.entities_spawn_point[1], stage);
                     stage.entities[1].set_path(blink_path);
                     stage.entities[2].set_position(stage.entities_spawn_point[2], stage);
                     stage.entities[2].set_path(pink_path);
-                    
+
                     stage.last_key_input = ' ';
                     --stage.lives;
                     break;
                 }
-                
+
                 //in this case, the ghost dies
                 case AFRAID:
                 {
@@ -114,19 +118,19 @@ void handle_collisions(Stage& stage)
                     stage.entities[i].state = DEAD;
                     stage.entities[i].set_path(bfs(stage, stage.entities_positions[i], stage.entities_spawn_point[i]));
                     stage.entities[i].set_speed(200);
-                    
+
                     stage.score += 200;
                     break;
                 }
-                
+
                 //nothing to do in this case yet
                 case DEAD:
                 default:
                     break;
             }
-            
-            
-            
+
+
+
             break;
         }
     }
@@ -151,7 +155,7 @@ void handle_AIs(Stage& stage)
                 stage.entities[i].state = NORMAL;
                 stage.entities[i].set_path_finding(stage.normal_pathfinder[i]);
             }
-            
+
             //every 5s, ghosts enter chase mode for 15s, before scattering again for 5s and so on
             if (SDL_GetTicks() % 20000 < 5000)
                 stage.entities[i].set_path_finding(scatter_AI);
@@ -161,4 +165,3 @@ void handle_AIs(Stage& stage)
         }
     }
 }
-
