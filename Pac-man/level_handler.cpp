@@ -51,7 +51,6 @@ void classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> cons
         //cout << (stage.entities[2].state == AFRAID) << (stage.entities[2].state == DEAD) << endl;
 
         cap.cap();
-
     }
 }
 
@@ -94,10 +93,13 @@ void handle_collisions(Stage& stage)
                 //in this case, pac man dies
                 case NORMAL:
                 {
-                    stack<pair<int, int>> pac_path, blink_path, pink_path;
+                    stack<pair<int, int>> pac_path, blink_path, pink_path, inky_path, clyde_path;
                     pac_path.push(stage.entities_spawn_point[0]);
                     blink_path.push({stage.entities_spawn_point[1]});
                     pink_path.push({stage.entities_spawn_point[2]});
+                    inky_path.push({stage.entities_spawn_point[3]});
+                    clyde_path.push({stage.entities_spawn_point[4]});
+
 
                     stage.entities[0].set_position(stage.entities_spawn_point[0], stage);
                     stage.entities[0].set_path(pac_path);
@@ -105,6 +107,10 @@ void handle_collisions(Stage& stage)
                     stage.entities[1].set_path(blink_path);
                     stage.entities[2].set_position(stage.entities_spawn_point[2], stage);
                     stage.entities[2].set_path(pink_path);
+                    stage.entities[3].set_position(stage.entities_spawn_point[3], stage);
+                    stage.entities[3].set_path(inky_path);
+                    stage.entities[4].set_position(stage.entities_spawn_point[4], stage);
+                    stage.entities[4].set_path(clyde_path);
 
                     stage.last_key_input = ' ';
                     --stage.lives;
