@@ -11,12 +11,13 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 
 #include "constants.hpp"
 #include "labyrinth.hpp"
 
-void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font);
+void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, std::vector<LTexture*> const &textures);
 
 #endif /* graphic_display_hpp */
