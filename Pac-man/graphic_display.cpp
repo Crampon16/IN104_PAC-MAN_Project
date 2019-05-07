@@ -123,6 +123,12 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
     DrawCircle(renderer, stage.entities[2].get_position(), SQUARE_SIZE/2);
 
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+    DrawCircle(renderer, stage.entities[3].get_position(), SQUARE_SIZE/2);
+
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+    DrawCircle(renderer, stage.entities[4].get_position(), SQUARE_SIZE/2);
+
     //Show score and remaining lives
     string score = "Score: " + to_string(stage.score);
     string lives = "Lives: " + to_string(stage.lives);
