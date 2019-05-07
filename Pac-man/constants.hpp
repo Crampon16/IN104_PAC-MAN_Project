@@ -10,7 +10,7 @@
 #define constants_h
 
 //in lines and columns
-const int STAGE_WIDTH = 28, STAGE_HEIGHT = 30;
+const int STAGE_WIDTH = 28, STAGE_HEIGHT = 31;
 
 //in pixels
 const int SQUARE_SIZE = 20;
