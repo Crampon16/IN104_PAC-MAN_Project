@@ -1,3 +1,4 @@
+
 //
 //  level_handler.hpp
 //  Pac-man
@@ -20,7 +21,7 @@
 #include "controller.hpp"
 #include "graphic_display.hpp"
 
-void classic_level(std::string layout, SDL_Renderer* renderer, std::vector<LTexture*> textures, LBitmapFont& font);
+void classic_level(std::string layout, SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font);
 
 /*
  This function detects several type of collisions and applies different effects to each:
