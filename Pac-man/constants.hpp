@@ -23,4 +23,6 @@ const int AVATAR_SIZE = SQUARE_SIZE;
 
 const int pac_man_id = 0;
 
+const int clyde_chicken_distance = 4;
+
 #endif /* constants_h */
