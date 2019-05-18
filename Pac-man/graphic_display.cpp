@@ -111,12 +111,106 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     DrawCircle(renderer, stage.entities[pac_man_id].get_position(), SQUARE_SIZE/2);
     */
 
+    Uint32 current_time = SDL_GetTicks()%1000;
+
+    //for pacman
     SDL_Point sprite_pos = stage.entities[pac_man_id].get_position();
-    sprite_pos.x -= SQUARE_SIZE/2;
-    sprite_pos.y -= SQUARE_SIZE/2;
+        sprite_pos.x -= SQUARE_SIZE/2;
+        sprite_pos.y -= SQUARE_SIZE/2;
 
-    textures[pac_man_id]->render(sprite_pos);
+    pair<int, int> direction;
+        direction.first =  stage.entities[pac_man_id].get_path().top().first - stage.entities[pac_man_id].get_previous_square().first;
+        direction.second =  stage.entities[pac_man_id].get_path().top().second - stage.entities[pac_man_id].get_previous_square().second;
 
+        SDL_Rect src;
+        src.x = SQUARE_SIZE;
+        src.y = 0;
+        src.h = SQUARE_SIZE;
+        src.w = SQUARE_SIZE;
+
+        if(current_time < 333)
+            src.y = 0;
+        else if(current_time < 666)
+            src.y = SQUARE_SIZE;
+        else
+            src.y = SQUARE_SIZE*2;
+
+
+        switch (direction.first)
+        {
+            case 1 : src.x *= 3; break;
+            case -1 : src.x *= 1; break;
+            default : break;
+        }
+        switch (direction.second)
+        {
+            case 1 : src.x *= 0; break;
+            case -1 : src.x *= 2; break;
+            default : break;
+        }
+
+        textures[pac_man_id]->render(sprite_pos, &src);
+
+    //for ghosts
+    for (int i = 1; i <= 4; ++i)
+    {
+
+        SDL_Point sprite_pos = stage.entities[i].get_position();
+        sprite_pos.x -= SQUARE_SIZE/2;
+        sprite_pos.y -= SQUARE_SIZE/2;
+
+        //textures[pac_man_id]->render(sprite_pos);
+
+        SDL_Rect src;
+        src.x = SQUARE_SIZE;
+        src.y = 0;
+        src.h = SQUARE_SIZE;
+        src.w = SQUARE_SIZE;
+
+        if(current_time < 250)
+            src.y = 0;
+        else if(current_time < 500)
+            src.y = SQUARE_SIZE;
+        else if(current_time < 750)
+            src.y = SQUARE_SIZE*2;
+        else
+            src.y = SQUARE_SIZE*3;
+
+        pair<int, int> direction;
+        direction.first =  stage.entities[i].get_path().top().first - stage.entities[i].get_previous_square().first;
+        direction.second =  stage.entities[i].get_path().top().second - stage.entities[i].get_previous_square().second;
+
+
+        switch (direction.first)
+        {
+            case 1 : src.x *= 3; break;
+            case -1 : src.x *= 1; break;
+            default : break;
+        }
+        switch (direction.second)
+        {
+            case 1 : src.x *= 0; break;
+            case -1 : src.x *= 2; break;
+            default : break;
+        }
+
+        if (stage.entities[i].state == AFRAID)
+        {
+            textures[5]->render(sprite_pos, &src);
+        }
+        else if (stage.entities[i].state == DEAD)
+        {
+            textures[6]->render(sprite_pos, &src);
+        }
+        else
+        {
+            textures[i]->render(sprite_pos, &src);
+        }
+
+
+    }
+    
+    /*
     SDL_SetRenderDrawColor( renderer, 0x88, 0x88, 0xFF, 0xFF ); //Draw in light blue
     DrawCircle(renderer, stage.entities[1].get_position(), SQUARE_SIZE/2);
 
@@ -128,7 +222,8 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
 
     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
     DrawCircle(renderer, stage.entities[4].get_position(), SQUARE_SIZE/2);
-
+    */
+    
     //Show score and remaining lives
     string score = "Score: " + to_string(stage.score);
     string lives = "Lives: " + to_string(stage.lives);
