@@ -159,13 +159,14 @@ int main(int argv, char** args)
         vector<LTexture*> textures;
         vector<string> file_path;
 
-        file_path.push_back("pac_man_solo.png");
-        /*
-        file_path.push_back("pac_man.png");
-        file_path.push_back("pac_man.png");
-        file_path.push_back("pac_man.png");
-        file_path.push_back("pac_man.png");
-        */
+        file_path.push_back("pacman_anim.png");
+        file_path.push_back("blinky_anim.png");
+        file_path.push_back("pinky_anim.png");
+        file_path.push_back("inky_anim.png");
+        file_path.push_back("clyde_anim.png");
+        file_path.push_back("frightened_anim.png");
+        file_path.push_back("dead_sprite.png");
+
 
         LBitmapFont font;
         LTexture font_texture(renderer);
