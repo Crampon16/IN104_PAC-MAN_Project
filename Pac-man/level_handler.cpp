@@ -72,12 +72,17 @@ void handle_collisions(Stage& stage)
         //enter killer mode
         stage.entities[0].state = KILLER;
         stage.killer_mode_start = SDL_GetTicks();
-        for (int i = 1; i <= stage.entities.size(); ++i)
+
+        for (int i = 1; i <= 4; ++i)
         {
             //put ghost in afraid state, make him flee pac, and reverse its current direction
             stage.entities[i].state = AFRAID;
+
+            pair<int, int> tmp = stage.entities[i].get_previous_square();
+            stage.entities[i].set_previous_square(stage.entities[i].get_path().top());
+
             stage.entities[i].set_path_finding(escape_AI);
-            stage.entities[i].set_previous_square(stage.entities_positions[i]);
+            stage.entities[i].find_path(stage);
         }
 
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
