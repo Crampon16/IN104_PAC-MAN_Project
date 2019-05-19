@@ -9,9 +9,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-#include <time.h>
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 #include "constants.hpp"
 #include "texture_wrapper.hpp"
@@ -22,6 +21,10 @@
 #include "controller.hpp"
 
 #include "level_handler.hpp"
+#include "boss_handler.hpp"
+
+#include "entity_rebirth.hpp"
+#include "stage_reborn.hpp"
 
 using namespace std;
 
@@ -29,7 +32,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
 {
     //Initialization flag
     bool success = true;
-
+    
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
@@ -43,7 +46,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
         {
             printf( "Warning: Linear texture filtering not enabled!" );
         }
-
+        
         //Create window
         *window = SDL_CreateWindow( "Pac Man", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( window == NULL )
@@ -64,7 +67,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
             {
                 //Initialize renderer color
                 SDL_SetRenderDrawColor( *renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-
+                
                 //Initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;
                 if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -75,7 +78,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
             }
         }
     }
-
+    
     return success;
 }
 
@@ -83,14 +86,14 @@ bool loadMedia(vector<LTexture*>& textures, vector<string> file_path, SDL_Render
 {
     //Loading success flag
     bool success = true;
-
+    
     //Load press texture
     for(int i = 0; i < file_path.size(); i++)
     {
         //create new texture and add it to textures
         LTexture* temp = new LTexture(renderer);
         textures.push_back(temp);
-
+        
         //load the texture at the given path
         if( !textures[i]->loadFromFile( file_path[i] ) )
         {
@@ -98,8 +101,8 @@ bool loadMedia(vector<LTexture*>& textures, vector<string> file_path, SDL_Render
             success = false;
         }
     }
-
-
+    
+    
     return success;
 }
 
@@ -107,7 +110,7 @@ bool loadFont(LTexture* bitmap_texture, LBitmapFont* font, string path)
 {
     //Loading success flag
     bool success = true;
-
+    
     //Load font texture
     if( !bitmap_texture->loadFromFile( path ) )
     {
@@ -119,7 +122,7 @@ bool loadFont(LTexture* bitmap_texture, LBitmapFont* font, string path)
         //Build font from texture
         font->buildFont( bitmap_texture );
     }
-
+    
     return success;
 }
 
@@ -130,13 +133,13 @@ void close(SDL_Window* window, SDL_Renderer* renderer, vector<LTexture*> texture
     {
         textures[i]->free();
     }
-
+    
     //Destroy window
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
     window = NULL;
     renderer = NULL;
-
+    
     //Quit SDL subsystems
     IMG_Quit();
     SDL_Quit();
@@ -146,55 +149,47 @@ int main(int argv, char** args)
 {
     //This line initializes the RNG with the current date, which allows for randomness to occur
     //between different games
-    srand( (unsigned int) time(0) );
+    srand( (uint) time(0) );
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-
+    
     if( init(&window, &renderer) )
     {
         cout << "Initialization complete." << endl;
-
+        
         //game textures
         vector<LTexture*> textures;
         vector<string> file_path;
+        
+        file_path.push_back("sprites/pacman_anim.png");
+        
+        file_path.push_back("sprites/blinky_anim.png");
+        file_path.push_back("sprites/pinky_anim.png");
+        file_path.push_back("sprites/inky_anim.png");
+        file_path.push_back("sprites/clyde_anim.png");
 
-        file_path.push_back("pacman_anim.png");
-        file_path.push_back("blinky_anim.png");
-        file_path.push_back("pinky_anim.png");
-        file_path.push_back("inky_anim.png");
-        file_path.push_back("clyde_anim.png");
-        file_path.push_back("frightened_anim.png");
-        file_path.push_back("dead_sprite.png");
-
+        file_path.push_back("sprites/frightened_anim.png");
+        file_path.push_back("sprites/blinking_anim.png");
+        file_path.push_back("sprites/dead_sprite.png");
+        
+        file_path.push_back("sprites/boss_anim.png");
+        file_path.push_back("sprites/frightened_boss_anim.png");
+        file_path.push_back("sprites/blinking_boss_anim.png");
+        
 
         LBitmapFont font;
         LTexture font_texture(renderer);
         string font_path = "lazyfont_blanc.png";
-
+        
         if ( loadMedia(textures, file_path, renderer) and loadFont(&font_texture, &font, font_path))
         {
-            cout << "Sprite and font loading complete." << endl;
 
-            //this codes shows the picture stocked at textures[0]
-            /*the full function prototype is available in texture_wrapper.hpp, and allows to render the picture:
-             - partially using an SDL_Rect (clip is the area on the picture that will be rendered)
-             - rotated by an angle in degrees using a double and an SDL_Point for rotation center
-             - flipped using enum values
-            */
-
-            /*SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-            SDL_RenderClear(renderer);
-
-
-            textures[0]->render({0,0});
-            SDL_RenderPresent(renderer);
-
-            */
+            
             string layout = "layout2.txt";
-
-            classic_level(layout, renderer, textures, font);
-
+            if(classic_level(layout, renderer, textures, font))
+                boss_fight(renderer, textures, font);
+            
             close(window, renderer, textures);
         }
     }
