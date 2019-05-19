@@ -44,15 +44,12 @@ Stage init_stage(string path)
         return stage;
     }
     string buffer;
-    vector<string> params;
-
-
+    
     int i = 0;
     while ( getline(stream, buffer) )
     {
         for(int j = 0; j < STAGE_WIDTH; ++j)
         {
-
             switch (buffer[j])
             {
 
@@ -61,12 +58,15 @@ Stage init_stage(string path)
                     break;
                 case 'O': //a square containing a gum
                     stage.matrix[i][j].item = "gum";
+                    ++stage.number_of_gums;
                     break;
                 case 'K': //a square containing a super-gum
+                    ++stage.number_of_gums;
                     stage.matrix[i][j].item = "super_gum";
                     break;
                 case 'N': //a node : contains a normal gum and entities recalculate their path here
                     stage.matrix[i][j].item = "gum";
+                    ++stage.number_of_gums;
                     stage.matrix[i][j].is_node = true;
                     break;
                 case 'M': //a node without gum
@@ -75,7 +75,7 @@ Stage init_stage(string path)
                 case 'U': //a square where you can only go up, and only enter by the sides or the lower half
                     stage.matrix[i][j].go_up = true;
                     break;
-
+                
                     //every spawn point (and spawn direction) is a node
                 case 'S': //pac-man's spawn AND spawn direction
                     stage.entities_spawn_point[0] = {i,j};
@@ -103,24 +103,22 @@ Stage init_stage(string path)
                     stage.entities_spawn_direction[3] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-                case 'C': //spawn of clyde
+                case 'C': //spawn of clide
                     stage.entities_spawn_point[4] = {i,j};
                     break;
-                case 'c': //spawn direction of clyde
+                case 'c': //spawn direction of clide
                     stage.entities_spawn_direction[4] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-
-
+                    
+                    
                 default:
                     break;
             }
         }
         ++i;
     }
-
-
-
+    
     stack<pair<int, int>> pac_path;
     pac_path.push({stage.entities_spawn_point[0]});
     stack<pair<int, int>> blink_path;
@@ -131,29 +129,32 @@ Stage init_stage(string path)
     inky_path.push({stage.entities_spawn_point[3]});
     stack<pair<int, int>> clyde_path;
     clyde_path.push({stage.entities_spawn_point[4]});
-
+    
     stage.normal_pathfinder = {pacman_AI, blinky_AI, pinky_AI, inky_AI, clyde_AI};
 
+    stage.normal_pathfinder = {pacman_AI, blinky_AI, pinky_AI};
+    
     Entity pac( {SQUARE_SIZE/2 + stage.entities_spawn_point[0].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[0].first*SQUARE_SIZE}, 150, pac_path , pacman_AI, 0);
     stage.entities.push_back(pac);
     stage.entities_positions.push_back(stage.entities_spawn_point[0]);
-
+    
     Entity blinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[1].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[1].first*SQUARE_SIZE}, 75, blink_path , blinky_AI, 1);
     stage.entities.push_back(blinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[1]);
-
+    
     Entity pinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[2].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[2].first*SQUARE_SIZE}, 75, pink_path , pinky_AI, 2);
     stage.entities.push_back(pinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[2]);
-
+    
     Entity inky( {SQUARE_SIZE/2 + stage.entities_spawn_point[3].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[3].first*SQUARE_SIZE}, 75, inky_path , inky_AI, 3);
     stage.entities.push_back(inky);
     stage.entities_positions.push_back(stage.entities_spawn_point[3]);
-
+    
     Entity clyde( {SQUARE_SIZE/2 + stage.entities_spawn_point[4].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[4].first*SQUARE_SIZE}, 75, clyde_path , clyde_AI, 4);
     stage.entities.push_back(clyde);
     stage.entities_positions.push_back(stage.entities_spawn_point[4]);
-
-
+    
     return stage;
 }
+
+
