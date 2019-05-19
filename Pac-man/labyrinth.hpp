@@ -59,6 +59,7 @@ struct Stage
     int lives = 3;
     
     int score = 0;
+    int number_of_gums = 0;
 };
 
 Stage init_stage(std::string path);
