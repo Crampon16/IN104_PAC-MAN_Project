@@ -11,12 +11,13 @@
 
 #include <stdio.h>
 #include <string>
-#include <vector>
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 #include "constants.hpp"
 #include "labyrinth.hpp"
+
+const int AFRAID_ID = 5, BLINKING_ID = 6, DEAD_ID = 7;
 
 void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, std::vector<LTexture*> const &textures);
 
