@@ -15,7 +15,7 @@ typedef int32_t s32;
 void DrawCircle(SDL_Renderer *Renderer, SDL_Point center, s32 radius)
 {
     s32 _x = center.x, _y = center.y;
-
+    
     s32 x = radius - 1;
     s32 y = 0;
     s32 tx = 1;
@@ -33,7 +33,7 @@ void DrawCircle(SDL_Renderer *Renderer, SDL_Point center, s32 radius)
         SDL_RenderDrawPoint(Renderer, _x + y, _y + x);
         SDL_RenderDrawPoint(Renderer, _x - y, _y - x);
         SDL_RenderDrawPoint(Renderer, _x - y, _y + x);
-
+        
         if (err <= 0)
         {
             y++;
@@ -55,23 +55,23 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 ); //in black
     //SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0x00 ); //in white
     SDL_RenderClear( renderer );
-
-
+    
+    
     //Draw the limits of the stage
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
     SDL_Rect stage_outline = {0,0, SQUARE_SIZE*STAGE_WIDTH, SQUARE_SIZE*STAGE_HEIGHT};
     SDL_RenderDrawRect(renderer, &stage_outline);
-
-
+    
+    
     //Draw each Square of the stage
     SDL_Rect square_outline = {0, 0, SQUARE_SIZE, SQUARE_SIZE};
     SDL_Point square_center = {SQUARE_SIZE/2, SQUARE_SIZE/2};
-
+    
     for (int i = 0; i < STAGE_HEIGHT; ++i)
     {
         square_outline.x = 0;
         square_center.x = SQUARE_SIZE/2;
-
+        
         for (int j = 0; j < STAGE_WIDTH; ++j)
         {
             if (stage.matrix[i][j].obstructed)
@@ -84,9 +84,9 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
                 SDL_SetRenderDrawColor( renderer, 0x00, 0xFF, 0x00, 0xFF ); //Draw in green
                 SDL_RenderDrawRect(renderer, &square_outline);
             }
-
-
-
+            
+            
+            
             if (stage.matrix[i][j].item == "gum")
             {
                 SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF ); //Draw in yellow
@@ -103,70 +103,86 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
         square_outline.y += SQUARE_SIZE;
         square_center.y += SQUARE_SIZE;
     }
-
-
+    
+    
     //Draw the entities in the stage
     /*
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF ); //Draw in yellow
-    DrawCircle(renderer, stage.entities[pac_man_id].get_position(), SQUARE_SIZE/2);
-    */
-
+     SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0x00, 0xFF ); //Draw in yellow
+     DrawCircle(renderer, stage.entities[pac_man_id].get_position(), SQUARE_SIZE/2);
+     */
+    
     Uint32 current_time = SDL_GetTicks()%1000;
-
+    
     //for pacman
     SDL_Point sprite_pos = stage.entities[pac_man_id].get_position();
-        sprite_pos.x -= SQUARE_SIZE/2;
-        sprite_pos.y -= SQUARE_SIZE/2;
-
-    pair<int, int> direction;
-        direction.first =  stage.entities[pac_man_id].get_path().top().first - stage.entities[pac_man_id].get_previous_square().first;
-        direction.second =  stage.entities[pac_man_id].get_path().top().second - stage.entities[pac_man_id].get_previous_square().second;
-
-        SDL_Rect src;
-        src.x = SQUARE_SIZE;
+    sprite_pos.x -= SQUARE_SIZE/2;
+    sprite_pos.y -= SQUARE_SIZE/2;
+    
+    SDL_Rect src;
+    src.x = SQUARE_SIZE;
+    src.y = 0;
+    src.h = SQUARE_SIZE;
+    src.w = SQUARE_SIZE;
+    
+    if(current_time < 333)
         src.y = 0;
-        src.h = SQUARE_SIZE;
-        src.w = SQUARE_SIZE;
-
-        if(current_time < 333)
-            src.y = 0;
-        else if(current_time < 666)
-            src.y = SQUARE_SIZE;
-        else
-            src.y = SQUARE_SIZE*2;
-
-
-        switch (direction.first)
-        {
-            case 1 : src.x *= 3; break;
-            case -1 : src.x *= 1; break;
-            default : break;
-        }
-        switch (direction.second)
-        {
-            case 1 : src.x *= 0; break;
-            case -1 : src.x *= 2; break;
-            default : break;
-        }
-
-        textures[pac_man_id]->render(sprite_pos, &src);
-
+    else if(current_time < 666)
+        src.y = SQUARE_SIZE;
+    else
+        src.y = SQUARE_SIZE*2;
+    
+    pair<int, int> direction;
+    direction.first =  stage.entities[pac_man_id].get_path().top().first - stage.entities[pac_man_id].get_previous_square().first;
+    direction.second =  stage.entities[pac_man_id].get_path().top().second - stage.entities[pac_man_id].get_previous_square().second;
+    
+    bool moving = false;
+    
+    switch (direction.first)
+    {
+        case 1 :
+            src.x *= 3;
+            moving = true;
+            break;
+        case -1 :
+            src.x *= 1;
+            moving = true;
+            break;
+        default : break;
+    }
+    switch (direction.second)
+    {
+        case 1 :
+            src.x *= 0;
+            moving = true;
+            break;
+        case -1 :
+            src.x *= 2;
+            moving = true;
+            break;
+        default : break;
+    }
+    
+    if (!moving)
+        src.y = 0;
+    
+    textures[pac_man_id]->render(sprite_pos, &src);
+    
     //for ghosts
     for (int i = 1; i <= 4; ++i)
     {
-
+        
         SDL_Point sprite_pos = stage.entities[i].get_position();
         sprite_pos.x -= SQUARE_SIZE/2;
         sprite_pos.y -= SQUARE_SIZE/2;
-
+        
         //textures[pac_man_id]->render(sprite_pos);
-
+        
         SDL_Rect src;
         src.x = SQUARE_SIZE;
         src.y = 0;
         src.h = SQUARE_SIZE;
         src.w = SQUARE_SIZE;
-
+        
         if(current_time < 250)
             src.y = 0;
         else if(current_time < 500)
@@ -175,12 +191,12 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
             src.y = SQUARE_SIZE*2;
         else
             src.y = SQUARE_SIZE*3;
-
+        
         pair<int, int> direction;
         direction.first =  stage.entities[i].get_path().top().first - stage.entities[i].get_previous_square().first;
         direction.second =  stage.entities[i].get_path().top().second - stage.entities[i].get_previous_square().second;
-
-
+        
+        
         switch (direction.first)
         {
             case 1 : src.x *= 3; break;
@@ -193,43 +209,43 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
             case -1 : src.x *= 2; break;
             default : break;
         }
-
+        
         if (stage.entities[i].state == AFRAID)
         {
-            textures[5]->render(sprite_pos, &src);
+            if (SDL_GetTicks() - stage.killer_mode_start < 3500)
+                textures[AFRAID_ID]->render(sprite_pos, &src);
+            else
+                textures[BLINKING_ID]->render(sprite_pos, &src);
         }
         else if (stage.entities[i].state == DEAD)
         {
-            textures[6]->render(sprite_pos, &src);
+            textures[DEAD_ID]->render(sprite_pos, &src);
         }
         else
         {
             textures[i]->render(sprite_pos, &src);
         }
-
-
+        
+        
     }
     
     /*
-    SDL_SetRenderDrawColor( renderer, 0x88, 0x88, 0xFF, 0xFF ); //Draw in light blue
-    DrawCircle(renderer, stage.entities[1].get_position(), SQUARE_SIZE/2);
-
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
-    DrawCircle(renderer, stage.entities[2].get_position(), SQUARE_SIZE/2);
-
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
-    DrawCircle(renderer, stage.entities[3].get_position(), SQUARE_SIZE/2);
-
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
-    DrawCircle(renderer, stage.entities[4].get_position(), SQUARE_SIZE/2);
-    */
+     SDL_SetRenderDrawColor( renderer, 0x88, 0x88, 0xFF, 0xFF ); //Draw in light blue
+     DrawCircle(renderer, stage.entities[1].get_position(), SQUARE_SIZE/2);
+     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+     DrawCircle(renderer, stage.entities[2].get_position(), SQUARE_SIZE/2);
+     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+     DrawCircle(renderer, stage.entities[3].get_position(), SQUARE_SIZE/2);
+     SDL_SetRenderDrawColor( renderer, 0xFF, 0x40, 0x40, 0xFF ); //Draw in pink
+     DrawCircle(renderer, stage.entities[4].get_position(), SQUARE_SIZE/2);
+     */
     
     //Show score and remaining lives
     string score = "Score: " + to_string(stage.score);
     string lives = "Lives: " + to_string(stage.lives);
     font.renderText(0, SCREEN_HEIGHT - 4*SQUARE_SIZE - 10, score);
     font.renderText(0, SCREEN_HEIGHT - 2*SQUARE_SIZE - 10, lives);
-
-
+    
+    
     SDL_RenderPresent( renderer );
 }
