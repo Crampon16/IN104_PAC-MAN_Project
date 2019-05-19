@@ -219,6 +219,7 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
         }
         else if (stage.entities[i].state == DEAD)
         {
+            src.y = 0;
             textures[DEAD_ID]->render(sprite_pos, &src);
         }
         else
