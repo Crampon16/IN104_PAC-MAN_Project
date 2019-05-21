@@ -103,10 +103,10 @@ Stage init_stage(string path)
                     stage.entities_spawn_direction[3] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-                case 'C': //spawn of clide
+                case 'C': //spawn of clyde
                     stage.entities_spawn_point[4] = {i,j};
                     break;
-                case 'c': //spawn direction of clide
+                case 'c': //spawn direction of clyde
                     stage.entities_spawn_direction[4] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
