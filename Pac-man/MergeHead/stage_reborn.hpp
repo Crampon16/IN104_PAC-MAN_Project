@@ -2,9 +2,7 @@
 //  stage_rebirth.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 27/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef stage_reborn_hpp
 #define stage_reborn_hpp
