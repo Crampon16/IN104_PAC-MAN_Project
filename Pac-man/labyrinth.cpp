@@ -2,9 +2,7 @@
 //  labyrinth.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 03/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "labyrinth.hpp"
 
@@ -52,8 +50,18 @@ Stage init_stage(string path)
         {
             switch (buffer[j])
             {
-
-                case 'X': //a wall
+                case 'W'://a wedge
+                    stage.matrix[i][j].wall_type = 'W';
+                    stage.matrix[i][j].obstructed = true;
+                    break;
+                case 'w'://inverted wedge
+                    stage.matrix[i][j].wall_type = 'w';
+                    stage.matrix[i][j].obstructed = true;
+                    break;
+                case 'E'://edge
+                    stage.matrix[i][j].wall_type = 'E';
+                    stage.matrix[i][j].obstructed = true;
+                case 'X': //a full wall
                     stage.matrix[i][j].obstructed = true;
                     break;
                 case 'O': //a square containing a gum
@@ -103,10 +111,10 @@ Stage init_stage(string path)
                     stage.entities_spawn_direction[3] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-                case 'C': //spawn of clyde
+                case 'C': //spawn of clide
                     stage.entities_spawn_point[4] = {i,j};
                     break;
-                case 'c': //spawn direction of clyde
+                case 'c': //spawn direction of clide
                     stage.entities_spawn_direction[4] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
@@ -138,19 +146,19 @@ Stage init_stage(string path)
     stage.entities.push_back(pac);
     stage.entities_positions.push_back(stage.entities_spawn_point[0]);
     
-    Entity blinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[1].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[1].first*SQUARE_SIZE}, 75, blink_path , blinky_AI, 1);
+    Entity blinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[1].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[1].first*SQUARE_SIZE}, 75, blink_path , still_AI, 1);
     stage.entities.push_back(blinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[1]);
     
-    Entity pinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[2].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[2].first*SQUARE_SIZE}, 75, pink_path , pinky_AI, 2);
+    Entity pinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[2].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[2].first*SQUARE_SIZE}, 75, pink_path , still_AI, 2);
     stage.entities.push_back(pinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[2]);
     
-    Entity inky( {SQUARE_SIZE/2 + stage.entities_spawn_point[3].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[3].first*SQUARE_SIZE}, 75, inky_path , inky_AI, 3);
+    Entity inky( {SQUARE_SIZE/2 + stage.entities_spawn_point[3].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[3].first*SQUARE_SIZE}, 75, inky_path , still_AI, 3);
     stage.entities.push_back(inky);
     stage.entities_positions.push_back(stage.entities_spawn_point[3]);
     
-    Entity clyde( {SQUARE_SIZE/2 + stage.entities_spawn_point[4].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[4].first*SQUARE_SIZE}, 75, clyde_path , clyde_AI, 4);
+    Entity clyde( {SQUARE_SIZE/2 + stage.entities_spawn_point[4].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[4].first*SQUARE_SIZE}, 75, clyde_path , still_AI, 4);
     stage.entities.push_back(clyde);
     stage.entities_positions.push_back(stage.entities_spawn_point[4]);
     
