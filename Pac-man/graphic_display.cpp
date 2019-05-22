@@ -130,12 +130,14 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     src.h = SQUARE_SIZE;
     src.w = SQUARE_SIZE;
     
-    if(current_time < 333)
+    if(current_time < 250)
         src.y = 0;
-    else if(current_time < 666)
+    else if(current_time < 500)
         src.y = SQUARE_SIZE;
-    else
+    else if(current_time < 750)
         src.y = SQUARE_SIZE*2;
+    else
+        src.y = SQUARE_SIZE*3;
     
     pair<int, int> direction;
     direction.first =  stage.entities[pac_man_id].get_path().top().first - stage.entities[pac_man_id].get_previous_square().first;
