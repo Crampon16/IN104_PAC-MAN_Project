@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font)
+void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, bool& victory, bool& quit)
 {
     SDL_Event e;
     char key_input = ' ';
@@ -36,9 +36,10 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
     
     FPSCapper cap(60);
     
-    bool quit = animation(renderer, textures, font);
+    animation(renderer, textures, font, quit);
     
-    while( !quit )
+    bool fight = true;
+    while( !quit and fight)
     {
         cap.start();
         while (SDL_PollEvent( &e ) != 0)
@@ -65,16 +66,18 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
         
         if (pac.get_hp() == 0)
         {
-            quit = true;
-            cout << "GAME OVER" << endl;
+            fight = false;
+            victory = false;
+            //cout << "GAME OVER" << endl;
         }
         
         else if (mhead.get_hp() == 0)
         {
             if (mhead.get_phase() == CONTINUOUS_RAM)
             {
-                quit = true;
-                cout << "YOU WIN!" << endl;
+                fight = false;
+                victory = true;
+                //cout << "YOU WIN!" << endl;
             }
             else
                 mhead.next_phase();
@@ -84,10 +87,10 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
     }
 }
 
-bool animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font)
+void animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, bool& quit)
 {
     SDL_Event e;
-    bool quit = false, animation = true;
+    bool animation = true;
     
     FPSCapper cap(60);
     
@@ -152,8 +155,6 @@ bool animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, L
         cap.cap();
         time_since_animation_beginning += 17;
     }
-    
-    return quit;
 }
 
 void move(Uint32 delta, Avatar& pac, char input, MergeHead& mhead, TetrisGrid& grid, PongBall& ball, PongRacket& r1, PongRacket& r2)
