@@ -496,12 +496,14 @@ void Avatar::render(SDL_Renderer *renderer)
     SDL_Rect clip = {0,0, AVATAR_SIZE, AVATAR_SIZE};
     
     Uint32 time = SDL_GetTicks() % 1000;
-    if (time < 333)
+    if(time < 250)
         clip.y = 0;
-    else if(time < 666)
-        clip.y = AVATAR_SIZE;
+    else if(time < 500)
+        clip.y = SQUARE_SIZE;
+    else if(time < 750)
+        clip.y = SQUARE_SIZE*2;
     else
-        clip.y = 2*AVATAR_SIZE;
+        clip.y = SQUARE_SIZE*3;
     
     if (movement_direction.x > 0)
         clip.x = 0;
