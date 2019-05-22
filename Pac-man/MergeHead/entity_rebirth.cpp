@@ -2,9 +2,7 @@
 //  entity_rebirth.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 27/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "entity_rebirth.hpp"
 
@@ -40,6 +38,7 @@ MergeHead::MergeHead(SDL_Point pos, vector<LTexture*> text):EntityRebirth(pos, {
     hp = 100;
     
     textures = text;
+    frame_number = 0;
 }
 TetrisBlock::TetrisBlock(SDL_Point pos, char shape):EntityRebirth(pos, {})
 {
@@ -90,6 +89,17 @@ PongBall::PongBall(SDL_Point pos, SDL_Point targ):EntityRebirth(pos, {{0,0,AVATA
     movement_direction.x /= norm;
     movement_direction.y /= norm;
 }
+Pellet::Pellet(SDL_Point pos, SDL_Point targ):EntityRebirth(pos, {{0,0, AVATAR_SIZE/2, AVATAR_SIZE/2}})
+{
+    speed = BOSS_STAGE_HEIGHT;
+    
+    movement_direction = {targ.x - position.x, targ.y - position.y};
+    float norm = sqrt(movement_direction.x*movement_direction.x + movement_direction.y*movement_direction.y);
+    movement_direction.x /= norm;
+    movement_direction.y /= norm;
+    
+    out_of_stage = false;
+}
 
 
 //movers
@@ -117,10 +127,10 @@ void Avatar::move(Uint32 delta, char key_press)
     position.x += movement_direction.x*speed*signed_delta/1000.f;
     position.y += movement_direction.y*speed*signed_delta/1000.f;
     
-    if (position.x < AVATAR_SIZE/2)
-        position.x = AVATAR_SIZE/2;
-    if (position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE/2)
-        position.x = BOSS_STAGE_WIDTH - AVATAR_SIZE/2;
+    if (position.x < 3*AVATAR_SIZE/2)
+        position.x = 3*AVATAR_SIZE/2;
+    if (position.x > BOSS_STAGE_WIDTH - 3*AVATAR_SIZE/2)
+        position.x = BOSS_STAGE_WIDTH - 3*AVATAR_SIZE/2;
     if (position.y < AVATAR_SIZE/2)
         position.y = AVATAR_SIZE/2;
     if (position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE/2)
@@ -156,7 +166,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -215,7 +225,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -239,7 +249,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -298,7 +308,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -322,7 +332,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -346,7 +356,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -370,7 +380,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -394,7 +404,7 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
                 position.y += movement_direction.y*speed*signed_delta/1000.f;
                 
                 //bounce if an edge has been reached
-                if (position.x < AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - AVATAR_SIZE)
+                if (position.x < 2*AVATAR_SIZE or position.x > BOSS_STAGE_WIDTH - 2*AVATAR_SIZE)
                     movement_direction.x *= -1;
                 if (position.y < AVATAR_SIZE or position.y > BOSS_STAGE_HEIGHT - AVATAR_SIZE)
                     movement_direction.y *= -1;
@@ -463,6 +473,16 @@ void PongBall::move(Uint32 delta)
     if (position.y < 0 or position.y > BOSS_STAGE_HEIGHT)
         movement_direction.y *= -1;
 }
+void Pellet::move(Uint32 delta)
+{
+    int signed_delta = delta;
+    position.x += movement_direction.x*speed*signed_delta/1000.f;
+    position.y += movement_direction.y*speed*signed_delta/1000.f;
+    
+    //register if gone out of the stage
+    if (position.y < 0 or position.y > BOSS_STAGE_HEIGHT or position.x < 0 or position.x > BOSS_STAGE_WIDTH)
+        out_of_stage = true;
+}
 
 //rendering
 void Avatar::render(SDL_Renderer *renderer)
@@ -512,20 +532,25 @@ void MergeHead::render(SDL_Renderer *renderer)
     int sprite = 0;
     if ( subphase == STUN )
     {
+        if (time < 250)
+            clip.y = 0;
+        else if (time < 500)
+            clip.y = 2*AVATAR_SIZE;
+        else if (time < 750)
+            clip.y = 4*AVATAR_SIZE;
+        else
+            clip.y = 6*AVATAR_SIZE;
+        
         if (time_since_subphase_beginning < 3500)
             sprite = 1;
         else
             sprite = 2;
     }
-    
-    if (time < 250)
-        clip.y = 0;
-    else if (time < 500)
-        clip.y = 2*AVATAR_SIZE;
-    else if (time < 750)
-        clip.y = 4*AVATAR_SIZE;
     else
-        clip.y = 6*AVATAR_SIZE;
+    {
+        clip.y = frame_number* 2*AVATAR_SIZE;
+        frame_number = (frame_number+1) % (textures[0]->getHeight()/(2*AVATAR_SIZE));
+    }
     
     if (movement_direction.x > 0)
         clip.x = 0;
@@ -565,6 +590,12 @@ void PongBall::render(SDL_Renderer *renderer)
     SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF ); // in white
     SDL_Rect ball_rect = {static_cast<int>(position.x - AVATAR_SIZE/4), static_cast<int>(position.y - AVATAR_SIZE/4), AVATAR_SIZE/2, AVATAR_SIZE/2};
     SDL_RenderFillRect(renderer, &ball_rect);
+}
+void Pellet::render(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor( renderer, rand()%255, rand()%255, rand()%255, 0xFF ); // in RAINBOW
+    SDL_Rect pellet_rect = {static_cast<int>(position.x - AVATAR_SIZE/4), static_cast<int>(position.y - AVATAR_SIZE/4), AVATAR_SIZE/2, AVATAR_SIZE/2};
+    SDL_RenderFillRect(renderer, &pellet_rect);
 }
 
 
@@ -660,6 +691,11 @@ int MergeHead::get_hp()
 Phase MergeHead::get_phase()
 {
     return phase;
+}
+
+bool Pellet::is_out_stage()
+{
+    return out_of_stage;
 }
 
 
