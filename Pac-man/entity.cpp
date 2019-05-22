@@ -2,9 +2,7 @@
 //  entity.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 02/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "entity.hpp"
 
@@ -166,6 +164,11 @@ void Entity::find_path(Stage& stage)
     square.second = position.x / SQUARE_SIZE;
     
     path = path_finder(Id, stage);
+}
+
+std::stack<std::pair<int, int>>(*Entity::get_path_finding())(int,Stage&)
+{
+    return path_finder;
 }
 
 void Entity::set_path_finding(std::stack<std::pair<int,int> > (*paff_finder)(int id, Stage&))
