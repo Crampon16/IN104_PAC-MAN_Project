@@ -18,9 +18,9 @@
 
 const int TRANSLATION_PHASE_DURATION = 2000, ROTATION_PHASE_DURATION = 2000;
 
-void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font);
+void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, bool& victory, bool& quit);
 
-bool animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font);
+void animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, bool& quit);
 
 void move(Uint32 delta, Avatar& pac, char input, MergeHead& mhead, TetrisGrid& grid, PongBall& ball, PongRacket& r1, PongRacket& r2);
 
