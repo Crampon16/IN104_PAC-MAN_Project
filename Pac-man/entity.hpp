@@ -2,9 +2,7 @@
 //  entity.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 02/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef entity_hpp
 #define entity_hpp
@@ -83,6 +81,7 @@ public:
     void find_path(Stage& stage);
     
     void set_path_finding(std::stack<std::pair<int,int> > (*path_finder)(int, Stage&));
+    std::stack<std::pair<int, int>>(*get_path_finding())(int,Stage&);
     
 private:
     
