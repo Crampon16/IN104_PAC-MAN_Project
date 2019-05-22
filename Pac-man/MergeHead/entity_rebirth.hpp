@@ -2,9 +2,7 @@
 //  entity_rebirth.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 27/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef entity_rebirth_hpp
 #define entity_rebirth_hpp
@@ -121,6 +119,7 @@ private:
     void bounce();
     
     std::vector<LTexture*> textures;
+    int frame_number;
 
 };
 
@@ -161,6 +160,20 @@ public:
 
     
 private:
+};
+
+class Pellet: public EntityRebirth
+{
+public:
+    Pellet(SDL_Point pos, SDL_Point target);
+    void move(Uint32 delta);
+    
+    virtual void render(SDL_Renderer* renderer);
+    
+    bool is_out_stage();
+    
+protected:
+    bool out_of_stage;
 };
 
 #endif /* entity_rebirth_hpp */
