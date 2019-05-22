@@ -2,6 +2,9 @@
 //  constants.h
 //  Pac-man
 //
+//  Created by Liam Rampon on 03/04/2019.
+//  Copyright © 2019 Liam Rampon. All rights reserved.
+//
 
 #ifndef constants_h
 #define constants_h
@@ -24,5 +27,6 @@ const int AVATAR_SIZE = SQUARE_SIZE;
 const int pac_man_id = 0;
 
 const int clyde_chicken_distance = 4;
+const int new_game_music_time = 4250;
 
 #endif /* constants_h */
