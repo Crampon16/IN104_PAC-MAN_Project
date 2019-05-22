@@ -3,7 +3,6 @@
 //  Pac-man
 //
 
-
 #include "labyrinth.hpp"
 
 using namespace std;
@@ -50,18 +49,7 @@ Stage init_stage(string path)
         {
             switch (buffer[j])
             {
-                case 'W'://a wedge
-                    stage.matrix[i][j].wall_type = 'W';
-                    stage.matrix[i][j].obstructed = true;
-                    break;
-                case 'w'://inverted wedge
-                    stage.matrix[i][j].wall_type = 'w';
-                    stage.matrix[i][j].obstructed = true;
-                    break;
-                case 'E'://edge
-                    stage.matrix[i][j].wall_type = 'E';
-                    stage.matrix[i][j].obstructed = true;
-                case 'X': //a full wall
+                case 'X': //a wall
                     stage.matrix[i][j].obstructed = true;
                     break;
                 case 'O': //a square containing a gum
@@ -127,6 +115,98 @@ Stage init_stage(string path)
         ++i;
     }
     
+    
+    //Generating a list of the sprites to superpose for the walls
+    for (int line = 0; line < STAGE_HEIGHT; ++line)
+        for (int column = 0; column < STAGE_WIDTH; ++column)
+        {
+            bitset<8> adjacent_walls = 0;
+            if (line != 0)
+            {
+                adjacent_walls[2] = stage.matrix[line-1][column].obstructed;
+                if (column != 0)
+                    adjacent_walls[3] = stage.matrix[line-1][column-1].obstructed;
+                if (column != STAGE_WIDTH - 1)
+                    adjacent_walls[1] = stage.matrix[line-1][column+1].obstructed;
+            }
+            if (line != STAGE_HEIGHT - 1)
+            {
+                adjacent_walls[6] = stage.matrix[line+1][column].obstructed;
+                if (column != 0)
+                    adjacent_walls[5] = stage.matrix[line+1][column-1].obstructed;
+                if (column != STAGE_WIDTH - 1)
+                    adjacent_walls[7] = stage.matrix[line+1][column+1].obstructed;
+            }
+            if (column != 0)
+                adjacent_walls[4] = stage.matrix[line][column-1].obstructed;
+            if (column != STAGE_WIDTH - 1)
+                adjacent_walls[0] = stage.matrix[line][column+1].obstructed;
+            
+            
+            if ( adjacent_walls[0] + adjacent_walls[2] + adjacent_walls[4] + adjacent_walls[6] == 0 ) // round
+                stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 4*AVATAR_SIZE});
+            
+            else if (  adjacent_walls[0] + adjacent_walls[2] + adjacent_walls[4] +  adjacent_walls[6] == 1 )// thin end
+            {
+                if (adjacent_walls[0]) // right full
+                    stage.matrix[line][column].sprites.push_back({0, 4*AVATAR_SIZE});
+                else if (adjacent_walls[2]) // top full
+                    stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 5*AVATAR_SIZE});
+                else if (adjacent_walls[4]) // left full
+                    stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, 4*AVATAR_SIZE});
+                else // bottom full
+                    stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 3*AVATAR_SIZE});
+            }
+            
+            else // superposition time
+            {
+                if (adjacent_walls[2] and adjacent_walls[6]) //vertical straight wall
+                {
+                    if (not adjacent_walls[4])
+                        stage.matrix[line][column].sprites.push_back({0, AVATAR_SIZE}); //left
+                    if (not adjacent_walls[0])
+                        stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, AVATAR_SIZE}); //right
+                }
+                else if (adjacent_walls[0] and adjacent_walls[4]) // horizontal straight wall
+                {
+                    if (not adjacent_walls[2])
+                        stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 0}); //top
+                    if (not adjacent_walls[6])
+                        stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 2*AVATAR_SIZE}); //bottom
+                }
+                
+                if (adjacent_walls[0] and adjacent_walls[2]) // NE corner
+                {
+                    if ( not (adjacent_walls[4] or adjacent_walls[6]) ) // big
+                        stage.matrix[line][column].sprites.push_back({0, 2*AVATAR_SIZE});
+                    if (not adjacent_walls[1]) //small
+                        stage.matrix[line][column].sprites.push_back({0, 5*AVATAR_SIZE});
+                }
+                if (adjacent_walls[2] and adjacent_walls[4]) // NW corner
+                {
+                    if ( not (adjacent_walls[0] or adjacent_walls[6]) ) // big
+                        stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, 2*AVATAR_SIZE});
+                    if (not adjacent_walls[3]) //small
+                        stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, 5*AVATAR_SIZE});
+                }
+                if (adjacent_walls[4] and adjacent_walls[6]) // SW corner
+                {
+                    if ( not (adjacent_walls[0] or adjacent_walls[2]) ) // big
+                        stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, 0});
+                    if (not adjacent_walls[5]) //small
+                        stage.matrix[line][column].sprites.push_back({2*AVATAR_SIZE, 3*AVATAR_SIZE});
+                }
+                if (adjacent_walls[6] and adjacent_walls[0]) // SE corner
+                {
+                    if ( not (adjacent_walls[2] or adjacent_walls[4]) ) // big
+                        stage.matrix[line][column].sprites.push_back({0, 0});
+                    if (not adjacent_walls[7]) //small
+                        stage.matrix[line][column].sprites.push_back({0, 3*AVATAR_SIZE});
+                }
+            }
+            
+        }
+    
     stack<pair<int, int>> pac_path;
     pac_path.push({stage.entities_spawn_point[0]});
     stack<pair<int, int>> blink_path;
@@ -164,5 +244,4 @@ Stage init_stage(string path)
     
     return stage;
 }
-
 
