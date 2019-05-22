@@ -2,9 +2,7 @@
 //  labyrinth.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 03/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef labyrinth_hpp
 #define labyrinth_hpp
@@ -28,6 +26,7 @@ class Entity;
 struct Square
 {
     bool obstructed = false;
+    char wall_type = 'X'; //X is simple, E an edge, W a wedge, w an inverted wedge
     bool is_node = false;
     bool go_up = false;
     
@@ -54,7 +53,7 @@ struct Stage
     //these variables characterize what state the game is in
     char last_key_input;
     
-    Uint32 killer_mode_start;
+    Uint32 killer_mode_start, level_start;
     
     int lives = 3;
     
