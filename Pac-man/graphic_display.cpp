@@ -54,10 +54,12 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     SDL_RenderClear( renderer );
     
     
-    //Draw the limits of the stage
+    //Draw the limits of the stage OR NOT !
+    /*
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
     SDL_Rect stage_outline = {0,0, SQUARE_SIZE*STAGE_WIDTH, SQUARE_SIZE*STAGE_HEIGHT};
     SDL_RenderDrawRect(renderer, &stage_outline);
+    */
     
     
     //Draw each Square of the stage
