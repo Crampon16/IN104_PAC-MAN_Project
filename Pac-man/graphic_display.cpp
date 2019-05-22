@@ -66,7 +66,6 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
     SDL_Rect square_outline = {0, 0, SQUARE_SIZE, SQUARE_SIZE};
     SDL_Point square_center = {SQUARE_SIZE/2, SQUARE_SIZE/2};
     
-    SDL_Rect wall_clip = {SQUARE_SIZE,SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE};
     
     for (int i = 0; i < STAGE_HEIGHT; ++i)
     {
