@@ -3,9 +3,7 @@
 //  level_handler.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 25/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "level_handler.hpp"
 
@@ -24,6 +22,7 @@ bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> cons
     FPSCapper cap(60);
     
     stage.killer_mode_start = 0;
+    stage.level_start = SDL_GetTicks();
     
     while( !quit )
     {
@@ -82,10 +81,13 @@ void handle_collisions(Stage& stage)
         
         for (int i = 1; i <= 4; ++i)
         {
+            //if the ghost is still, no effect
+            if (stage.entities[i].get_path_finding() == still_AI)
+                continue;
+            
             //put ghost in afraid state, make him flee pac, and reverse its current direction
             stage.entities[i].state = AFRAID;
             
-            pair<int, int> tmp = stage.entities[i].get_previous_square();
             stage.entities[i].set_previous_square(stage.entities[i].get_path().top());
             
             stage.entities[i].set_path_finding(escape_AI);
@@ -159,6 +161,15 @@ void handle_AIs(Stage& stage)
     //only ghosts need an AI change
     for (int i = 1; i <= 4; ++i)
     {
+        //check if the ghost should stay still
+        if (SDL_GetTicks() - stage.level_start < (i-1)*2500)
+            continue;
+        
+        if (stage.entities[i].get_path_finding() == still_AI)
+        {
+            stage.entities[i].set_path_finding(stage.normal_pathfinder[i-1]);
+        }
+        
         //if a dead ghost reached its spawn
         if (stage.entities[i].state == DEAD and stage.entities_positions[i] == stage.entities_spawn_point[i])
         {
