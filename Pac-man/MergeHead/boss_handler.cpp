@@ -2,9 +2,7 @@
 //  boss_handler.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 30/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "boss_handler.hpp"
 
@@ -16,11 +14,25 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
     char key_input = ' ';
     
     Avatar pac({BOSS_STAGE_WIDTH/2, 3*BOSS_STAGE_HEIGHT/4}, textures[0]);
+    
     vector<LTexture*> boss_textures(textures.end() - 3, textures.end());
     MergeHead mhead({BOSS_STAGE_WIDTH/2, BOSS_STAGE_HEIGHT/4}, boss_textures);
+    
     PongRacket prack1({SQUARE_SIZE, BOSS_STAGE_HEIGHT/2}), prack2({BOSS_STAGE_WIDTH - AVATAR_SIZE, BOSS_STAGE_HEIGHT/2});
+    
     PongBall ball({BOSS_STAGE_WIDTH/2, BOSS_STAGE_HEIGHT/2}, {0,0});
-    TetrisGrid grid({0,0}, BOSS_STAGE_HEIGHT/AVATAR_SIZE, BOSS_STAGE_WIDTH/AVATAR_SIZE);
+    
+    TetrisGrid grid({AVATAR_SIZE,0}, BOSS_STAGE_HEIGHT/AVATAR_SIZE, BOSS_STAGE_WIDTH/AVATAR_SIZE - 2);
+    
+    vector<Pellet> pellets;
+    /*
+    SDL_Point center = {BOSS_STAGE_WIDTH/2, BOSS_STAGE_HEIGHT/2};
+    for (int i = 0; i < 100; i++)
+    {
+        Pellet pellet({static_cast<int>(center.x + cos(2*M_PI*i/100.f)), static_cast<int>(center.y + sin(2*M_PI*i/100.f))}, center);
+        pellets.push_back(pellet);
+    }
+     */
     
     FPSCapper cap(60);
     
@@ -42,8 +54,13 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
         }
         
         move(17, pac, key_input, mhead, grid, ball, prack1, prack2);
+        for (int i = 0; i < pellets.size(); ++i)
+        {
+            pellets[i].move(17);
+        }
         handle_collisions(pac, mhead, grid, ball);
-        display_stage(renderer, pac, mhead, grid, ball, prack1, prack2, textures, font);
+        display_stage(renderer, pac, mhead, grid, ball, prack1, prack2, pellets, textures, font);
+
         
         
         if (pac.get_hp() == 0)
@@ -222,15 +239,24 @@ void handle_collisions(Avatar& pac, MergeHead& mhead, TetrisGrid& grid, PongBall
     
 }
 
-void display_stage(SDL_Renderer* renderer, Avatar& pac, MergeHead& mhead, TetrisGrid& grid, PongBall& ball, PongRacket& r1, PongRacket& r2, std::vector<LTexture*> const &textures, LBitmapFont& font)
+void display_stage(SDL_Renderer* renderer, Avatar& pac, MergeHead& mhead, TetrisGrid& grid, PongBall& ball, PongRacket& r1, PongRacket& r2, vector<Pellet> pellets, std::vector<LTexture*> const &textures, LBitmapFont& font)
 {
     //Clear screen
     SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0x00, 0x00 ); //in black
     SDL_RenderClear( renderer );
     
+    //Display stage border
+    SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0x00 );
+    SDL_Rect border = {AVATAR_SIZE, 0, BOSS_STAGE_WIDTH - 2*AVATAR_SIZE, BOSS_STAGE_HEIGHT};
+    SDL_RenderDrawRect(renderer, &border);
+    
     //Render entities
     pac.render(renderer);
     mhead.render(renderer);
+    for (int i = 0; i < pellets.size(); ++i)
+    {
+        pellets[i].render(renderer);
+    }
     
     if (mhead.get_phase() == ANGLE_RAM)
     {
