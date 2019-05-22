@@ -1,3 +1,4 @@
+
 //
 //  level_handler.cpp
 //  Pac-man
@@ -8,24 +9,24 @@
 
 using namespace std;
 
-bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font, vector<Mix_Chunk*> const &sounds)
+bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font, vector<Mix_Chunk*> const &sounds, bool& quit)
 {
-
+    
     Stage stage = init_stage(layout);
-
-
+    
+    
     SDL_Event e;
-    bool quit = false;
-    bool victory = false;
-
+    bool victory = false, level = true;
+    
     FPSCapper cap(60);
-
+    
     stage.killer_mode_start = 0;
     stage.level_start = SDL_GetTicks();
+    
+    sound_animation(renderer, textures, font, stage, sounds[0], new_game_music_time, quit);
 
-    sound_animation(renderer, textures, font, stage, sounds[0], new_game_music_time);
-
-    while( !quit )
+    
+    while( !quit and level)
     {
         cap.start();
         while (SDL_PollEvent( &e ) != 0)
@@ -41,25 +42,55 @@ bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> cons
             // 1/60s = 17ms
             stage.entities[i].move(17, stage);
         }
-        handle_collisions(stage, sounds, renderer, textures, font);
+        handle_collisions(stage, sounds, renderer, textures, font, quit);
         handle_AIs(stage);
         display(renderer, stage, font, textures);
-
+        
         if(stage.lives == -1)
-            quit = true;
+            level = false;
         else if(stage.number_of_gums <= 0)
         {
-            quit = true;
+            level = false;
             victory = true;
         }
-
+        
         cap.cap();
     }
-
+    
     return victory;
 }
 
-void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font)
+void display_splash(SDL_Renderer* renderer, LTexture* splash , Uint32 time, bool& quit)
+{
+    SDL_Event e;
+    FPSCapper cap(60);
+    
+    Uint32 start = SDL_GetTicks();
+
+    while( !quit and SDL_GetTicks() - start < time)
+    {
+        cap.start();
+        while (SDL_PollEvent( &e ) != 0)
+        {
+            if(e.type == SDL_QUIT)
+            {
+                quit = true;
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+        SDL_RenderClear(renderer);
+        
+        SDL_Point splash_position = { (SCREEN_WIDTH - splash->getWidth())/2, (SCREEN_HEIGHT - splash->getHeight())/2};
+        splash->render(splash_position);
+        
+        SDL_RenderPresent(renderer);
+        
+        cap.cap();
+
+    }
+}
+
+void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font, bool& quit)
 {
     // pac/gum collision
     pair<int, int> pac_pos = stage.entities_positions[0];
@@ -68,39 +99,39 @@ void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Rende
         stage.score += 10;
         --stage.number_of_gums;
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
-
+        
         //play sound
         Mix_PlayChannel( -1, sounds[1], 0 );
     }
-
+    
     // pac/super-gum collision
     if(stage.matrix[pac_pos.first][pac_pos.second].item == "super_gum")
     {
         stage.score += 100;
         --stage.number_of_gums;
-
+        
         //enter killer mode
         stage.entities[0].state = KILLER;
         stage.killer_mode_start = SDL_GetTicks();
-
+        
         for (int i = 1; i <= 4; ++i)
         {
             //if the ghost is still, no effect
             if (stage.entities[i].get_path_finding() == still_AI)
                 continue;
-
+            
             //put ghost in afraid state, make him flee pac, and reverse its current direction
             stage.entities[i].state = AFRAID;
-
+            
             stage.entities[i].set_previous_square(stage.entities[i].get_path().top());
-
+            
             stage.entities[i].set_path_finding(escape_AI);
             stage.entities[i].find_path(stage);
         }
-
+        
         stage.matrix[pac_pos.first][pac_pos.second].item = "";
     }
-
+    
     // pac/ghost collision
     for (int i = 1; i <= 4; ++i)
     {
@@ -112,16 +143,16 @@ void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Rende
                 case NORMAL:
                 {
                     //Death animation
-                    sound_animation(renderer, textures, font, stage, sounds[4], 1700);
-
+                    sound_animation(renderer, textures, font, stage, sounds[4], 1700, quit);
+                    
                     stack<pair<int, int>> pac_path, blink_path, pink_path, inky_path, clyde_path;
                     pac_path.push(stage.entities_spawn_point[0]);
                     blink_path.push({stage.entities_spawn_point[1]});
                     pink_path.push({stage.entities_spawn_point[2]});
                     inky_path.push({stage.entities_spawn_point[3]});
                     clyde_path.push({stage.entities_spawn_point[4]});
-
-
+                    
+                    
                     stage.entities[0].set_position(stage.entities_spawn_point[0], stage);
                     stage.entities[0].set_path(pac_path);
                     stage.entities[1].set_position(stage.entities_spawn_point[1], stage);
@@ -132,12 +163,12 @@ void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Rende
                     stage.entities[3].set_path(inky_path);
                     stage.entities[4].set_position(stage.entities_spawn_point[4], stage);
                     stage.entities[4].set_path(clyde_path);
-
+                    
                     stage.last_key_input = ' ';
                     --stage.lives;
                     break;
                 }
-
+                    
                     //in this case, the ghost dies
                 case AFRAID:
                 {
@@ -145,20 +176,20 @@ void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Rende
                     stage.entities[i].state = DEAD;
                     stage.entities[i].set_path(bfs(stage, stage.entities_positions[i], stage.entities_spawn_point[i]));
                     stage.entities[i].set_speed(200);
-
+                    
                     stage.score += 200;
                     Mix_PlayChannel( -1, sounds[2], 0 );
                     break;
                 }
-
+                    
                     //nothing to do in this case yet
                 case DEAD:
                 default:
                     break;
             }
-
-
-
+            
+            
+            
             break;
         }
     }
@@ -172,12 +203,12 @@ void handle_AIs(Stage& stage)
         //check if the ghost should stay still
         if (SDL_GetTicks() - stage.level_start < (i-1)*2500 + new_game_music_time)
             continue;
-
+        
         if (stage.entities[i].get_path_finding() == still_AI)
         {
             stage.entities[i].set_path_finding(stage.normal_pathfinder[i-1]);
         }
-
+        
         //if a dead ghost reached its spawn
         if (stage.entities[i].state == DEAD and stage.entities_positions[i] == stage.entities_spawn_point[i])
         {
@@ -192,28 +223,27 @@ void handle_AIs(Stage& stage)
                 stage.entities[i].state = NORMAL;
                 stage.entities[i].set_path_finding(stage.normal_pathfinder[i]);
             }
-
+            
             //every 5s, ghosts enter chase mode for 15s, before scattering again for 5s and so on
             if (SDL_GetTicks() % 20000 < 5000)
                 stage.entities[i].set_path_finding(scatter_AI);
             else
                 stage.entities[i].set_path_finding(stage.normal_pathfinder[i]);
-
+            
         }
     }
 }
 
-void sound_animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, Stage& stage, Mix_Chunk* const &sound, Uint32 duration)
+void sound_animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, Stage& stage, Mix_Chunk* const &sound, Uint32 duration, bool& quit)
 {
     SDL_Event e;
-    bool quit = false;
     Uint32 time_beginning = SDL_GetTicks();
-
+    
     FPSCapper cap(60);
-
+    
     Mix_PlayChannel( -1, sound, 0 );
-
-    while ( !quit )
+    
+    while ( !quit and SDL_GetTicks()-time_beginning < duration)
     {
         cap.start();
         while (SDL_PollEvent( &e ) != 0)
@@ -223,12 +253,9 @@ void sound_animation(SDL_Renderer* renderer, std::vector<LTexture*> const &textu
                 quit = true;
             }
         }
-
+        
         display(renderer, stage, font, textures);
-
-        if (SDL_GetTicks()-time_beginning > duration)
-            quit = true;
-
+        
         cap.cap();
     }
 }
