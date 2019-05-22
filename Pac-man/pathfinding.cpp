@@ -277,9 +277,14 @@ SquareStack pinky_AI(int id, Stage& stage)
 
 SquareStack inky_AI(int id, Stage& stage)
 {
-    //not finished
+    SquarePos base = stage.entities_positions[pac_man_id], prev = stage.entities[pac_man_id].get_previous_square();
+    SquarePos blinky_pos = stage.entities_positions[1];
     
-    return nearest_square(stage, stage.entities_positions[id], stage.entities_positions[pac_man_id], stage.entities[id].get_previous_square());
+    SquarePos square_in_front = {2*base.first - prev.first, 2*base.second - prev.second};
+    SquarePos goal = {2*square_in_front.first - blinky_pos.first, 2*square_in_front.second - blinky_pos.second};
+
+    
+    return nearest_square(stage, stage.entities_positions[id], goal, stage.entities[id].get_previous_square());
 }
 
 SquareStack clyde_AI(int id, Stage& stage)
