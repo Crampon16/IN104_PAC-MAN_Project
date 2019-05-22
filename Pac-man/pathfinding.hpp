@@ -2,9 +2,7 @@
 //  pathfinding.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 09/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef pathfinding_hpp
 #define pathfinding_hpp
@@ -34,6 +32,11 @@ std::stack< std::pair<int, int> > inky_AI(int id, Stage& stage);
 //heads towards pac-man, or go away if too close of him
 std::stack< std::pair<int, int> > clyde_AI(int id, Stage& stage);
 
+
+
+//stay still
+std::stack<std::pair<int, int>> still_AI(int id, Stage& stage);
+
 //heads towards the scatter point of the entity
 std::stack<std::pair<int, int>> scatter_AI(int id, Stage& stage);
 
@@ -42,6 +45,8 @@ std::stack<std::pair<int, int>> escape_AI(int id, Stage& stage);
 
 //heads towards the spawn point of the entity, by going through walls
 std::stack<std::pair<int, int>> death_AI(int id, Stage& stage);
+
+
 
 //get last_input and update the position
 std::stack< std::pair<int, int> > pacman_AI(int id, Stage& stage);
