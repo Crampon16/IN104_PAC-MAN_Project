@@ -1,3 +1,4 @@
+
 //
 //  main.cpp
 //  Pac-man
@@ -7,9 +8,10 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <time.h>
 
-#include "SDL2/SDL.h"
-#include "SDL2_mixer/SDL_mixer.h"
+#include "SDL.h"
+#include "SDL_mixer.h"
 
 #include "constants.hpp"
 #include "texture_wrapper.hpp"
@@ -31,7 +33,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
 {
     //Initialization flag
     bool success = true;
-    
+
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
     {
@@ -45,7 +47,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
         {
             printf( "Warning: Linear texture filtering not enabled!" );
         }
-        
+
         //Create window
         *window = SDL_CreateWindow( "Pac Man", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( window == NULL )
@@ -66,7 +68,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
             {
                 //Initialize renderer color
                 SDL_SetRenderDrawColor( *renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-                
+
                 //Initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;
                 if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -74,7 +76,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
                     printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
                     success = false;
                 }
-                
+
                 //Initialize SDL_mixer
                 if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
                 {
@@ -84,7 +86,7 @@ bool init(SDL_Window** window, SDL_Renderer** renderer)
             }
         }
     }
-    
+
     return success;
 }
 
@@ -92,14 +94,14 @@ bool loadMedia(vector<LTexture*>& textures, vector<string> file_path, SDL_Render
 {
     //Loading success flag
     bool success = true;
-    
+
     //Load press texture
     for(int i = 0; i < file_path.size(); i++)
     {
         //create new texture and add it to textures
         LTexture* temp = new LTexture(renderer);
         textures.push_back(temp);
-        
+
         //load the texture at the given path
         if( !textures[i]->loadFromFile( file_path[i] ) )
         {
@@ -107,8 +109,8 @@ bool loadMedia(vector<LTexture*>& textures, vector<string> file_path, SDL_Render
             success = false;
         }
     }
-    
-    
+
+
     return success;
 }
 
@@ -116,7 +118,7 @@ bool loadFont(LTexture* bitmap_texture, LBitmapFont* font, string path)
 {
     //Loading success flag
     bool success = true;
-    
+
     //Load font texture
     if( !bitmap_texture->loadFromFile( path ) )
     {
@@ -128,14 +130,14 @@ bool loadFont(LTexture* bitmap_texture, LBitmapFont* font, string path)
         //Build font from texture
         font->buildFont( bitmap_texture );
     }
-    
+
     return success;
 }
 
 bool loadSounds(vector<Mix_Chunk*>& sounds, vector<Mix_Music*>& tracks, vector<string> sound_path, vector<string> track_path)
 {
     bool success = true;
-    
+
     //Load sound effects
     for (int i = 0; i < sound_path.size(); ++i)
     {
@@ -146,10 +148,10 @@ bool loadSounds(vector<Mix_Chunk*>& sounds, vector<Mix_Music*>& tracks, vector<s
             success = false;
         }
     }
-    
-    
+
+
     //Load music
-    for (int i = 0; i < sound_path.size(); ++i)
+    for (int i = 0; i < track_path.size(); ++i)
     {
         tracks.push_back ( Mix_LoadMUS( track_path[i].c_str() ) );
         if( tracks[tracks.size() - 1] == NULL )
@@ -158,8 +160,8 @@ bool loadSounds(vector<Mix_Chunk*>& sounds, vector<Mix_Music*>& tracks, vector<s
             success = false;
         }
     }
-    
-    
+
+
     return success;
 }
 
@@ -170,28 +172,28 @@ void close(SDL_Window* window, SDL_Renderer* renderer, vector<LTexture*>& textur
     {
         textures[i]->free();
     }
-    
+
     //Free the sound effects
     for (int i = 0; i < sounds.size(); ++i)
     {
         Mix_FreeChunk( sounds[i] );
         sounds[i] = NULL;
     }
-    
+
     //Free the music
     for (int i = 0; i < tracks.size(); ++i)
     {
         Mix_FreeMusic( tracks[i] );
         tracks[i] = NULL;
     }
-    
-    
+
+
     //Destroy window
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
     window = NULL;
     renderer = NULL;
-    
+
     //Quit SDL subsystems
     Mix_Quit();
     IMG_Quit();
@@ -202,28 +204,27 @@ int main(int argv, char** args)
 {
     //This line initializes the RNG with the current date, which allows for randomness to occur
     //between different games
-    srand( (uint) time(0) );
+    srand( (unsigned int) time(0) );
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-    
+
     if( init(&window, &renderer) )
     {
         cout << "Initialization complete." << endl;
-        
-        //game textures
+
+        //game textures and sounds
         vector<LTexture*> normal_stage_textures, boss_stage_textures;
-        vector<string> stage_path, boss_path;
-        
+        vector<Mix_Chunk*> sounds;
+        vector<Mix_Music*> tracks;
+        vector<string> stage_path, boss_path, sound_path, track_path;
+
         LBitmapFont font;
         LTexture font_texture(renderer);
         string font_path = "lazyfont_blanc.png";
-        
-        vector<Mix_Chunk*> sounds;
-        vector<Mix_Music*> tracks;
-        
+
         stage_path.push_back("sprites/pacman_anim.png");
-        
+
         stage_path.push_back("sprites/blinky_anim.png");
         stage_path.push_back("sprites/pinky_anim.png");
         stage_path.push_back("sprites/inky_anim.png");
@@ -232,27 +233,40 @@ int main(int argv, char** args)
         stage_path.push_back("sprites/frightened_anim.png");
         stage_path.push_back("sprites/blinking_anim.png");
         stage_path.push_back("sprites/dead_sprite.png");
-        
+
         boss_path = stage_path;
-        
+
         stage_path.push_back("sprites/wall1.png");
-        
+
         boss_path.push_back("sprites/boss_anim.png");
         boss_path.push_back("sprites/frightened_boss_anim.png");
         boss_path.push_back("sprites/blinking_boss_anim.png");
-        
+
+        //Sounds
+        sound_path.push_back("Sounds/new_game.wav");
+        sound_path.push_back("Sounds/gum.wav");
+        sound_path.push_back("Sounds/ghost_death.wav");
+        sound_path.push_back("Sounds/getting_hit.wav");
+        sound_path.push_back("Sounds/pacman_death.wav");
+        //Mix_PlayChannel( -1, gHigh, 0 );
+
+        cout << "before loading" << endl;
+
         if ( loadMedia(normal_stage_textures, stage_path, renderer)
             and loadMedia(boss_stage_textures, boss_path, renderer)
-            and loadFont(&font_texture, &font, font_path))
+            and loadFont(&font_texture, &font, font_path)
+            and loadSounds(sounds, tracks, sound_path, track_path))
         {
-            
-            string layout = "layout3.txt";
-            if(classic_level(layout, renderer, normal_stage_textures, font))
+
+            string layout = "layout2.txt";
+
+            cout << "load complet" << endl;
+            if(classic_level(layout, renderer, normal_stage_textures, font, sounds))
                 boss_fight(renderer, boss_stage_textures, font);
-            
+
             normal_stage_textures.insert(normal_stage_textures.end(), boss_stage_textures.begin(), boss_stage_textures.end());
             close(window, renderer, normal_stage_textures, sounds, tracks);
-            
+
         }
     }
 }
