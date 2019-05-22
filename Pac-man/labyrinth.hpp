@@ -26,7 +26,7 @@ class Entity;
 struct Square
 {
     bool obstructed = false;
-    char wall_type = 'X'; //X is simple, E an edge, W a wedge, w an inverted wedge
+    std::vector<SDL_Point> sprites;
     bool is_node = false;
     bool go_up = false;
     
