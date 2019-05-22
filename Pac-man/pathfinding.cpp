@@ -2,9 +2,7 @@
 //  pathfinding.cpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 09/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #include "pathfinding.hpp"
 
@@ -26,18 +24,18 @@ struct Node
 SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
 {
     SquarePos unexplored = {-1, -1};
-
+    
     //The queue will stock squares to process, the array the results of the processing
     queue<SquarePos> unexplored_nodes;
     Node nodes[STAGE_HEIGHT][STAGE_WIDTH];
-
+    
     unexplored_nodes.push(start);
-
+    
     while(not unexplored_nodes.empty())
     {
         SquarePos current = unexplored_nodes.front();
         unexplored_nodes.pop();
-
+        
         if (current.first > 0)
         {
             SquarePos candidate = {current.first - 1, current.second};
@@ -50,7 +48,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
                     nodes[candidate.first][candidate.second].previous = current;
                     break;
                 }
-
+                
                 //if the node is unexplored, it has been reached by the shortest path
                 if (nodes[candidate.first][candidate.second].previous == unexplored)
                 {
@@ -71,7 +69,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
                     nodes[candidate.first][candidate.second].previous = current;
                     break;
                 }
-
+                
                 //if the node is unexplored, it has been reached by the shortest path
                 if (nodes[candidate.first][candidate.second].previous == unexplored)
                 {
@@ -92,7 +90,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
                     nodes[candidate.first][candidate.second].previous = current;
                     break;
                 }
-
+                
                 //if the node  is unexplored, it has been reached by the shortest path
                 if (nodes[candidate.first][candidate.second].previous == unexplored)
                 {
@@ -113,7 +111,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
                     nodes[candidate.first][candidate.second].previous = current;
                     break;
                 }
-
+                
                 //if the node is unexplored, it has been reached by the shortest path
                 if (nodes[candidate.first][candidate.second].previous == unexplored)
                 {
@@ -123,7 +121,7 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
             }
         }
     }
-
+    
     //There was no path to the goal : stay stationnary
     //!!!!!
     //Remember to throw an error here
@@ -134,8 +132,8 @@ SquareStack bfs(Stage& stage, SquarePos start, SquarePos goal)
         path.push(start);
         return path;
     }
-
-
+    
+    
     SquareStack path;
     path.push(goal);
     SquarePos current = nodes[goal.first][goal.second].previous;
@@ -160,13 +158,13 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
         path.push({start.first - 1, start.second});
         return path;
     }
-
+    
     SquareStack candidates;
     candidates.push({start.first - 1, start.second});
     candidates.push({start.first + 1, start.second});
     candidates.push({start.first, start.second - 1});
     candidates.push({start.first, start.second + 1});
-
+    
     //find first element of stack that can be gone through
     SquarePos best;
     bool found_first = false;
@@ -182,7 +180,7 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
         }
         candidates.pop();
     }
-
+    
     //compare valid elements to find the best, euclidean distance wise
     while (not candidates.empty())
     {
@@ -199,7 +197,7 @@ SquareStack nearest_square(Stage& stage, SquarePos start, SquarePos goal, Square
         }
         candidates.pop();
     }
-
+    
     SquareStack path;
     path.push(best);
     return path;
@@ -213,13 +211,13 @@ SquareStack farthest_square(Stage& stage, SquarePos start, SquarePos goal, Squar
         path.push({start.first - 1, start.second});
         return path;
     }
-
+    
     SquareStack candidates;
     candidates.push({start.first - 1, start.second});
     candidates.push({start.first + 1, start.second});
     candidates.push({start.first, start.second - 1});
     candidates.push({start.first, start.second + 1});
-
+    
     //find first element of stack that can be gone through
     SquarePos best;
     bool found_first = false;
@@ -235,7 +233,7 @@ SquareStack farthest_square(Stage& stage, SquarePos start, SquarePos goal, Squar
         }
         candidates.pop();
     }
-
+    
     //compare valid elements to find the best, euclidean distance wise
     while (not candidates.empty())
     {
@@ -252,7 +250,7 @@ SquareStack farthest_square(Stage& stage, SquarePos start, SquarePos goal, Squar
         }
         candidates.pop();
     }
-
+    
     SquareStack path;
     path.push(best);
     return path;
@@ -273,30 +271,37 @@ SquareStack pinky_AI(int id, Stage& stage)
     SquarePos base = stage.entities_positions[pac_man_id], prev = stage.entities[pac_man_id].get_previous_square();
     SquarePos offset = {4*(base.first - prev.first), 4*(base.second - prev.second)};
     SquarePos goal = {base.first + offset.first, base.second + offset.second};
-
+    
     return nearest_square(stage, stage.entities_positions[id], goal, stage.entities[id].get_previous_square());
 }
 
 SquareStack inky_AI(int id, Stage& stage)
 {
     //not finished
-
+    
     return nearest_square(stage, stage.entities_positions[id], stage.entities_positions[pac_man_id], stage.entities[id].get_previous_square());
 }
 
 SquareStack clyde_AI(int id, Stage& stage)
 {
     int distance = square_distance(stage.entities_positions[id], stage.entities_positions[pac_man_id]);
-
+    
     if (distance <= clyde_chicken_distance)
         return farthest_square(stage, stage.entities_positions[id], stage.entities_positions[pac_man_id], stage.entities[id].get_previous_square());
-
+    
     return nearest_square(stage, stage.entities_positions[id], stage.entities_positions[pac_man_id], stage.entities[id].get_previous_square());
 }
 
 
 
 //AIs for frightened or dead ghosts
+
+SquareStack still_AI(int id, Stage& stage)
+{
+    SquareStack stack;
+    stack.push(stage.entities_positions[id]);
+    return stack;
+}
 
 SquareStack scatter_AI(int id, Stage& stage)
 {
@@ -343,10 +348,10 @@ SquareStack pacman_AI(int id, Stage& stage)
 {
     SquareStack stack;
     SquarePos current_pos = stage.entities_positions[id];
-
+    
     char input = stage.last_key_input;
     int line_movement = 0, column_movement = 0;
-
+    
     //calculate the position if the key press is followed
     bool no_press = false;
     switch (input)
@@ -363,20 +368,20 @@ SquareStack pacman_AI(int id, Stage& stage)
         case 'd':
             column_movement = 1;
             break;
-
+            
         default:
             no_press = true;
             break;
     }
-
-
+    
+    
     //if not going through a wall, return this square
     if(not stage.matrix[current_pos.first + line_movement][current_pos.second + column_movement].obstructed)
     {
         stack.push({current_pos.first + line_movement, current_pos.second + column_movement});
         return stack;
     }
-
+    
     //if we are here, try to go in the same direction as before
     line_movement = current_pos.first - stage.entities[id].get_previous_square().first;
     column_movement = current_pos.second - stage.entities[id].get_previous_square().second;
@@ -385,7 +390,7 @@ SquareStack pacman_AI(int id, Stage& stage)
         stack.push({current_pos.first + line_movement, current_pos.second + column_movement});
         return stack;
     }
-
+    
     //if all else failed, stay still
     stack.push({current_pos.first, current_pos.second});
     return stack;
