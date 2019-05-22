@@ -2,9 +2,7 @@
 //  level_handler.hpp
 //  Pac-man
 //
-//  Created by Liam Rampon on 25/04/2019.
-//  Copyright © 2019 Liam Rampon. All rights reserved.
-//
+
 
 #ifndef level_handler_hpp
 #define level_handler_hpp
