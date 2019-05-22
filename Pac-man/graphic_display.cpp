@@ -2,6 +2,9 @@
 //  graphic_display.cpp
 //  Pac-man
 //
+//  Created by Liam Rampon on 03/04/2019.
+//  Copyright © 2019 Liam Rampon. All rights reserved.
+//
 
 #include "graphic_display.hpp"
 
@@ -75,181 +78,11 @@ void display(SDL_Renderer* renderer, Stage stage, LBitmapFont& font, vector<LTex
         {
             if (stage.matrix[i][j].obstructed)
             {
-                /*
-                 SDL_SetRenderDrawColor( renderer, 0x00, 0x00, 0xFF, 0xFF ); //Draw in blue
-                 SDL_RenderFillRect(renderer, &square_outline);
-                */
-                
-                if (i == 0)
+                for (int clip_index = 0; clip_index < stage.matrix[i][j].sprites.size(); ++clip_index)
                 {
-                    if (j == 0) //top left corner
-                    {
-                        wall_clip.x = 6*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else if (j == STAGE_WIDTH-1) //top right corner
-                    {
-                        wall_clip.x = 7*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[1][j-1].obstructed) // right inverted wedge
-                    {
-                        wall_clip.x = 7*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[1][j+1].obstructed) // left inverted wedge
-                    {
-                        wall_clip.x = 6*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else //top
-                    {
-                        wall_clip.x = AVATAR_SIZE;
-                        wall_clip.y = 2*AVATAR_SIZE;
-                    }
+                    SDL_Rect clip = {stage.matrix[i][j].sprites[clip_index].x, stage.matrix[i][j].sprites[clip_index].y, AVATAR_SIZE, AVATAR_SIZE};
+                    textures[WALL_ID]->render({square_center.x - AVATAR_SIZE/2, square_center.y - AVATAR_SIZE/2}, &clip);
                 }
-                else if (i == STAGE_HEIGHT-1)
-                {
-                    if (j == 0) //bottom left corner
-                    {
-                        wall_clip.x = 6*AVATAR_SIZE;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                    else if (j == STAGE_WIDTH-1) //bottom right corner
-                    {
-                        wall_clip.x = 7*AVATAR_SIZE;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                    else //bottom
-                    {
-                        wall_clip.x = AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                }
-                else if (j == 0) // left
-                {
-                    if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[i-1][1].obstructed) // top inverted wedge
-                    {
-                        wall_clip.x = 6*AVATAR_SIZE;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                    else if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[i+1][1].obstructed) // bottom inverted wedge
-                    {
-                        wall_clip.x = 6*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else
-                    {
-                        wall_clip.x = 2*AVATAR_SIZE;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                }
-                else if( j == STAGE_WIDTH-1) //right
-                {
-                    if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[i-1][STAGE_WIDTH-2].obstructed) // top inverted wedge
-                    {
-                        wall_clip.x = 7*AVATAR_SIZE;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                    else if (stage.matrix[i][j].wall_type == 'w' and not stage.matrix[i+1][STAGE_WIDTH-2].obstructed) // bottom inverted wedge
-                    {
-                        wall_clip.x = 7*AVATAR_SIZE;
-                        wall_clip.y = 0;
-                    }
-                    else
-                    {
-                        wall_clip.x = 0;
-                        wall_clip.y = AVATAR_SIZE;
-                    }
-                }
-                
-                else
-                {
-                    switch (stage.matrix[i][j].wall_type)
-                    {
-                        case 'W':
-                            if (stage.matrix[i-1][j].obstructed)
-                                if (stage.matrix[i][j-1].obstructed)
-                                {
-                                    wall_clip.x = 2*AVATAR_SIZE;
-                                    wall_clip.y = 2*AVATAR_SIZE;
-                                }
-                                else
-                                {
-                                    wall_clip.x = 0;
-                                    wall_clip.y = 2*AVATAR_SIZE;
-                                }
-                                else
-                                {
-                                    if (stage.matrix[i][j-1].obstructed)
-                                    {
-                                        wall_clip.x = 2*AVATAR_SIZE;
-                                        wall_clip.y = 0;
-                                    }
-                                    else
-                                    {
-                                        wall_clip.x = 0;
-                                        wall_clip.y = 0;
-                                    }
-                                }
-                            break;
-                            
-                        case 'w':
-                            if (not stage.matrix[i-1][j-1].obstructed)
-                            {
-                                wall_clip.x = 7*AVATAR_SIZE;
-                                wall_clip.y = AVATAR_SIZE;
-                            }
-                            else if (not stage.matrix[i-1][j+1].obstructed)
-                            {
-                                wall_clip.x = 6*AVATAR_SIZE;
-                                wall_clip.y = AVATAR_SIZE;
-                            }
-                            else if (not stage.matrix[i+1][j-1].obstructed)
-                            {
-                                wall_clip.x = 7*AVATAR_SIZE;
-                                wall_clip.y = 0;
-                            }
-                            else
-                            {
-                                wall_clip.x = 6*AVATAR_SIZE;
-                                wall_clip.y = 0;
-                            }
-                            
-                            
-                            break;
-                            
-                        case 'E':
-                            if (not stage.matrix[i-1][j].obstructed)
-                            {
-                                wall_clip.x = AVATAR_SIZE;
-                                wall_clip.y = 0;
-                            }
-                            else if (not stage.matrix[i][j-1].obstructed)
-                            {
-                                wall_clip.x = 0;
-                                wall_clip.y = AVATAR_SIZE;
-                            }
-                            else if (not stage.matrix[i+1][j].obstructed)
-                            {
-                                wall_clip.x = AVATAR_SIZE;
-                                wall_clip.y = 2*AVATAR_SIZE;
-                            }
-                            else
-                            {
-                                wall_clip.x = 2*AVATAR_SIZE;
-                                wall_clip.y = AVATAR_SIZE;
-                            }
-                            break;
-                        case 'X':
-                        default:
-                            wall_clip.x = AVATAR_SIZE;
-                            wall_clip.y = AVATAR_SIZE;
-                    }
-                    
-                }
-                textures[WALL_ID]->render({square_center.x - AVATAR_SIZE/2, square_center.y - AVATAR_SIZE/2}, &wall_clip);
-                
             }
             /*
              if (stage.matrix[i][j].is_node)
