@@ -257,6 +257,7 @@ int main(int argv, char** args)
         track_path.push_back("Sounds/Boss_music.wav");
         track_path.push_back("Sounds/Tetriste.wav");
         track_path.push_back("Sounds/victory.wav");
+        track_path.push_back("Sounds/victory, or not.wav");
         //Mix_PlayChannel( -1, gHigh, 0 );
 
         cout << "before loading" << endl;
@@ -275,7 +276,8 @@ int main(int argv, char** args)
             if(classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit))
             {
                 bool victory;
-                display_splash(renderer,splash_screens[0], 3000, quit);
+                Mix_PlayMusic(tracks[4], -1);
+                display_splash(renderer,splash_screens[0], 4000, quit);
                 Mix_PlayMusic(tracks[1], -1);
                 display_splash(renderer,splash_screens[1], 3000, quit);
                 boss_fight(renderer, boss_stage_textures, font, sounds, tracks, victory, quit );
