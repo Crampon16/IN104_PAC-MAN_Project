@@ -89,9 +89,9 @@ PongBall::PongBall(SDL_Point pos, SDL_Point targ):EntityRebirth(pos, {{0,0,AVATA
     movement_direction.x /= norm;
     movement_direction.y /= norm;
 }
-Pellet::Pellet(SDL_Point pos, SDL_Point targ):EntityRebirth(pos, {{0,0, AVATAR_SIZE/2, AVATAR_SIZE/2}})
+Pellet::Pellet(SDL_Point pos, SDL_Point targ):EntityRebirth(pos, {{0,0, AVATAR_SIZE/4, AVATAR_SIZE/4}})
 {
-    speed = BOSS_STAGE_HEIGHT;
+    speed = BOSS_STAGE_HEIGHT/10;
     
     movement_direction = {targ.x - position.x, targ.y - position.y};
     float norm = sqrt(movement_direction.x*movement_direction.x + movement_direction.y*movement_direction.y);
@@ -440,6 +440,41 @@ void MergeHead::move(Uint32 delta, SDL_Point avatar_pos)
         }
             
         case BULLET_HELL:
+        {
+            if(subphase == RAM)
+            {
+                //end invulnerability time (activated by a phase change)
+                invulnerable = false;
+                
+                double angle = SDL_GetTicks()%5000 * 2*M_PI/5000;
+                SDL_Point offset = {static_cast<int>(5*AVATAR_SIZE*cos(angle)),static_cast<int>(5*AVATAR_SIZE*sin(angle))};
+                SDL_Point center = {BOSS_STAGE_WIDTH/2,BOSS_STAGE_HEIGHT/2};
+                retarget({center.x + offset.x, center.y + offset.y});
+                
+                int signed_delta = delta;
+                position.x += movement_direction.x*speed*signed_delta/1000.f;
+                position.y += movement_direction.y*speed*signed_delta/1000.f;
+                
+                
+                //if time has come to be stunned
+                if (time_since_subphase_beginning > 6000)
+                {
+                    //change subphase
+                    subphase = STUN;
+                    time_since_subphase_beginning = 0;
+                }
+            }
+            else if (subphase == STUN)
+            {
+                if (time_since_subphase_beginning > 5000)
+                {
+                    time_since_subphase_beginning = 0;
+                    subphase = RAM;
+                }
+            }
+            
+            
+        }
         default:
             break;
 
@@ -596,7 +631,7 @@ void PongBall::render(SDL_Renderer *renderer)
 void Pellet::render(SDL_Renderer *renderer)
 {
     SDL_SetRenderDrawColor( renderer, rand()%255, rand()%255, rand()%255, 0xFF ); // in RAINBOW
-    SDL_Rect pellet_rect = {static_cast<int>(position.x - AVATAR_SIZE/4), static_cast<int>(position.y - AVATAR_SIZE/4), AVATAR_SIZE/2, AVATAR_SIZE/2};
+    SDL_Rect pellet_rect = {static_cast<int>(position.x - AVATAR_SIZE/8), static_cast<int>(position.y - AVATAR_SIZE/8), AVATAR_SIZE/4, AVATAR_SIZE/4};
     SDL_RenderFillRect(renderer, &pellet_rect);
 }
 
@@ -633,7 +668,11 @@ void MergeHead::next_phase()
     else if (phase == ANGLE_RAM)
         phase = CONTINUOUS_RAM;
     else if (phase == CONTINUOUS_RAM)
+    {
+        speed = 6*AVATAR_SIZE;
         phase = BULLET_HELL;
+        subphase = STUN;
+    }
 }
 
 void PongBall::bounce()
