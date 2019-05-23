@@ -256,7 +256,7 @@ int main(int argv, char** args)
         track_path.push_back("Sounds/classic_music.wav");
         track_path.push_back("Sounds/Boss_music.wav");
         track_path.push_back("Sounds/Tetriste.wav");
-        track_path.push_back("Sounds/Stained, Brutal Calamity The End.wav");
+        track_path.push_back("Sounds/victory.wav");
         //Mix_PlayChannel( -1, gHigh, 0 );
 
         cout << "before loading" << endl;
@@ -271,7 +271,8 @@ int main(int argv, char** args)
             string layout = "layout2.txt";
 
             bool quit = false;
-            if(true /*classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit)*/)
+            //if(true /*classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit)*/)
+            if(classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit))
             {
                 bool victory;
                 display_splash(renderer,splash_screens[0], 3000, quit);
