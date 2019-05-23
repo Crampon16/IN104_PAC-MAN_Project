@@ -6,6 +6,7 @@ This is the repository for our work on the PAC-MAN project.
 The report is in the .zip archive.
 
 To play the game, install the SDL2, SDL2_image and SDL2_mixer library, a tutorial can be found at http://lazyfoo.net/tutorials/SDL/index.php (lesson 1 and 6). 
+
 Extract the .exe file, the "layout2.txt" file, the "lazyfont_blanc.png" file, the "Sounds" folder and the "sprites" from the .zip archive.
 Download the music files below and place it in the "Sounds" folder.
 Run the .exe in the same folder as the two folders from the .zip.
