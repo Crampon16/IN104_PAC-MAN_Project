@@ -8,22 +8,21 @@
 #define level_handler_hpp
 
 #include <stdio.h>
+#include <SDL_mixer.h>
 
 #include <string>
 #include <vector>
-
-#include "SDL2_mixer/SDL_mixer.h"
 
 #include "texture_wrapper.hpp"
 #include "time_wrapper.hpp"
 #include "labyrinth.hpp"
 #include "controller.hpp"
 #include "graphic_display.hpp"
-
+#include "constants.hpp"
 
 void display_splash(SDL_Renderer* renderer, LTexture* splash , Uint32 time, bool& quit);
 
-bool classic_level(std::string layout, SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, std::vector<Mix_Chunk*> const &sounds, bool& quit);
+bool classic_level(std::string layout, SDL_Renderer* renderer, std::vector<LTexture*> const &textures, LBitmapFont& font, std::vector<Mix_Chunk*> const &sounds,std::vector<Mix_Music*> const& tracks, bool& quit);
 
 /*
  This function detects several type of collisions and applies different effects to each:
