@@ -2,7 +2,9 @@
 //  constants.h
 //  Pac-man
 //
-
+//  Created by Liam Rampon on 03/04/2019.
+//  Copyright © 2019 Liam Rampon. All rights reserved.
+//
 
 #ifndef constants_h
 #define constants_h
@@ -22,8 +24,9 @@ const int BOSS_STAGE_WIDTH = SQUARE_SIZE*STAGE_WIDTH;
 const int BOSS_STAGE_HEIGHT = SQUARE_SIZE*STAGE_HEIGHT;
 const int AVATAR_SIZE = SQUARE_SIZE;
 
-
 const int pac_man_id = 0;
+
+const int PACMAN_SPEED = 90, BLINKY_SPEED = 75, INKY_SPEED = 70, PINKY_SPEED = 80, CLYDE_SPEED = 69, BOOSTED_SPEED = 89;
 
 const int clyde_chicken_distance = 4;
 const int new_game_music_time = 4250;
