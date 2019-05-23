@@ -41,7 +41,7 @@ Stage init_stage(string path)
         return stage;
     }
     string buffer;
-    
+
     int i = 0;
     while ( getline(stream, buffer) )
     {
@@ -71,7 +71,7 @@ Stage init_stage(string path)
                 case 'U': //a square where you can only go up, and only enter by the sides or the lower half
                     stage.matrix[i][j].go_up = true;
                     break;
-                
+
                     //every spawn point (and spawn direction) is a node
                 case 'S': //pac-man's spawn AND spawn direction
                     stage.entities_spawn_point[0] = {i,j};
@@ -106,16 +106,16 @@ Stage init_stage(string path)
                     stage.entities_spawn_direction[4] = {i,j};
                     stage.matrix[i][j].is_node = true;
                     break;
-                    
-                    
+
+
                 default:
                     break;
             }
         }
         ++i;
     }
-    
-    
+
+
     //Generating a list of the sprites to superpose for the walls
     for (int line = 0; line < STAGE_HEIGHT; ++line)
         for (int column = 0; column < STAGE_WIDTH; ++column)
@@ -141,11 +141,11 @@ Stage init_stage(string path)
                 adjacent_walls[4] = stage.matrix[line][column-1].obstructed;
             if (column != STAGE_WIDTH - 1)
                 adjacent_walls[0] = stage.matrix[line][column+1].obstructed;
-            
-            
+
+
             if ( adjacent_walls[0] + adjacent_walls[2] + adjacent_walls[4] + adjacent_walls[6] == 0 ) // round
                 stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 4*AVATAR_SIZE});
-            
+
             else if (  adjacent_walls[0] + adjacent_walls[2] + adjacent_walls[4] +  adjacent_walls[6] == 1 )// thin end
             {
                 if (adjacent_walls[0]) // right full
@@ -157,7 +157,7 @@ Stage init_stage(string path)
                 else // bottom full
                     stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 3*AVATAR_SIZE});
             }
-            
+
             else // superposition time
             {
                 if (adjacent_walls[2] and adjacent_walls[6]) //vertical straight wall
@@ -174,7 +174,7 @@ Stage init_stage(string path)
                     if (not adjacent_walls[6])
                         stage.matrix[line][column].sprites.push_back({AVATAR_SIZE, 2*AVATAR_SIZE}); //bottom
                 }
-                
+
                 if (adjacent_walls[0] and adjacent_walls[2]) // NE corner
                 {
                     if ( not (adjacent_walls[4] or adjacent_walls[6]) ) // big
@@ -204,9 +204,9 @@ Stage init_stage(string path)
                         stage.matrix[line][column].sprites.push_back({0, 3*AVATAR_SIZE});
                 }
             }
-            
+
         }
-    
+
     stack<pair<int, int>> pac_path;
     pac_path.push({stage.entities_spawn_point[0]});
     stack<pair<int, int>> blink_path;
@@ -217,31 +217,30 @@ Stage init_stage(string path)
     inky_path.push({stage.entities_spawn_point[3]});
     stack<pair<int, int>> clyde_path;
     clyde_path.push({stage.entities_spawn_point[4]});
-    
+
     stage.normal_pathfinder = {pacman_AI, blinky_AI, pinky_AI, inky_AI, clyde_AI};
 
     stage.normal_pathfinder = {pacman_AI, blinky_AI, pinky_AI};
-    
-    Entity pac( {SQUARE_SIZE/2 + stage.entities_spawn_point[0].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[0].first*SQUARE_SIZE}, 150, pac_path , pacman_AI, 0);
+
+    Entity pac( {SQUARE_SIZE/2 + stage.entities_spawn_point[0].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[0].first*SQUARE_SIZE}, 130, pac_path , pacman_AI, 0);
     stage.entities.push_back(pac);
     stage.entities_positions.push_back(stage.entities_spawn_point[0]);
-    
+
     Entity blinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[1].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[1].first*SQUARE_SIZE}, 75, blink_path , still_AI, 1);
     stage.entities.push_back(blinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[1]);
-    
+
     Entity pinky( {SQUARE_SIZE/2 + stage.entities_spawn_point[2].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[2].first*SQUARE_SIZE}, 75, pink_path , still_AI, 2);
     stage.entities.push_back(pinky);
     stage.entities_positions.push_back(stage.entities_spawn_point[2]);
-    
+
     Entity inky( {SQUARE_SIZE/2 + stage.entities_spawn_point[3].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[3].first*SQUARE_SIZE}, 75, inky_path , still_AI, 3);
     stage.entities.push_back(inky);
     stage.entities_positions.push_back(stage.entities_spawn_point[3]);
-    
+
     Entity clyde( {SQUARE_SIZE/2 + stage.entities_spawn_point[4].second*SQUARE_SIZE, SQUARE_SIZE/2 + stage.entities_spawn_point[4].first*SQUARE_SIZE}, 75, clyde_path , still_AI, 4);
     stage.entities.push_back(clyde);
     stage.entities_positions.push_back(stage.entities_spawn_point[4]);
-    
+
     return stage;
 }
-
