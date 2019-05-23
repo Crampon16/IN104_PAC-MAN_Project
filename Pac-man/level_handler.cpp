@@ -13,6 +13,8 @@ bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> cons
 
     Stage stage = init_stage(layout);
 
+    Uint32 start_time = SDL_GetTicks();
+
 
     SDL_Event e;
     bool victory = false, level = true;
@@ -41,7 +43,7 @@ bool classic_level(string layout, SDL_Renderer* renderer, vector<LTexture*> cons
             // 1/60s = 17ms
             stage.entities[i].move(17, stage);
         }
-        handle_collisions(stage, sounds, renderer, textures, font, quit);
+        handle_collisions(stage, sounds, renderer, textures, font, quit, start_time);
         handle_AIs(stage);
         display(renderer, stage, font, textures);
 
@@ -90,7 +92,7 @@ void display_splash(SDL_Renderer* renderer, LTexture* splash , Uint32 time, bool
     }
 }
 
-void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font, bool &quit)
+void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Renderer* renderer, vector<LTexture*> const &textures, LBitmapFont& font, bool &quit, Uint32 duration)
 {
     // pac/gum collision
     pair<int, int> pac_pos = stage.entities_positions[0];
@@ -192,7 +194,12 @@ void handle_collisions(Stage& stage, vector<Mix_Chunk*> const &sounds, SDL_Rende
 
             break;
         }
+
+        if (77000 < SDL_GetTicks()-duration and SDL_GetTicks()-duration < 78000)
+            stage.entities[i].set_speed(95);
+
     }
+
 }
 
 void handle_AIs(Stage& stage)
