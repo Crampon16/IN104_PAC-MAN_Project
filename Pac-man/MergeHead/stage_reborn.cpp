@@ -30,9 +30,9 @@ TetrisGrid::TetrisGrid(SDL_Point pos, int h, int w):EntityRebirth(pos, {})
     time_since_last_update = 0;
 }
 
-void TetrisGrid::add_piece(char shape, int column)
+void TetrisGrid::add_piece(int column)
 {
-    if (shape == ' ')
+    /*if (shape == ' ')
     {
         switch (rand()%3)
         {
@@ -49,18 +49,18 @@ void TetrisGrid::add_piece(char shape, int column)
             default:
                 break;
         }
-    }
+    }*/
     
     if (column == -1)
         column = rand()%width;
     
-    switch (shape)
+    /*switch (shape)
     {
 
         case 'l':
         {
-            if (column > width - 4) //if column is out of the grid to the right, replace it rightmost
-                column = width - 4;
+            if (column > width - 3) //if column is out of the grid to the right, replace it rightmost
+                column = width - 3;
             
             else if (column < 0) //if column is out of the grid to the left, replace it leftmost
                 column = 0;
@@ -87,7 +87,7 @@ void TetrisGrid::add_piece(char shape, int column)
             }
             
             if (not intersects_moving)
-                moving_pieces.push_back( { {1, column}, {0, column}, {0, column + 1}, {0, column + 2}, {0, column + 3} });
+                moving_pieces.push_back( { {1, column}, {0, column}, {0, column + 1}, {0, column + 2} });
 
             break;
         }
@@ -165,7 +165,57 @@ void TetrisGrid::add_piece(char shape, int column)
             
         default:
             break;
+    }*/
+    
+    int shape_number = rand()%shapes.size();
+    
+    int piece_width = shapes[shape_number][0].second;
+    for (int i = 1; i < shapes[shape_number].size(); ++i)
+        if (shapes[shape_number][i].second > piece_width)
+            piece_width = shapes[shape_number][i].second;
+    ++piece_width;
+    
+    if (column > width - piece_width) //if column is out of the grid to the right, replace it rightmost
+        column = width - piece_width;
+    
+    else if (column < 0) //if column is out of the grid to the left, replace it leftmost
+        column = 0;
+    
+    //test if the piece isn't intersecting with anything at its creation.
+    for (int i = 0; i < shapes[shape_number].size(); ++i)
+        if (filled_squares[shapes[shape_number][i].first][column+shapes[shape_number][i].second])
+        {
+            reset();
+            break;
+        }
+    
+    bool intersects_moving = false;
+    //if the piece is intersecting with a moving piece at its creation, do not create it
+    for (int p = 0; p < moving_pieces.size(); ++p)
+    {
+        vector<pair<int, int>>& piece = moving_pieces[p];
+        for (int b = 0; b < piece.size(); ++b)
+        {
+            pair<int, int> block = piece[b];
+            block.second -= column;
+            if (find(shapes[shape_number].begin(), shapes[shape_number].end(), block) != shapes[shape_number].end())
+            {
+                intersects_moving = true;
+                break;
+            }
+        }
     }
+    
+    if (not intersects_moving)
+    {
+        vector<pair<int, int>> piece;
+        for (int i = 0; i < shapes[shape_number].size(); ++i)
+            piece.push_back({shapes[shape_number][i].first, shapes[shape_number][i].second + column});
+        
+        moving_pieces.push_back(piece);
+    }
+    
+    
     
     actualize_colliders();
     
