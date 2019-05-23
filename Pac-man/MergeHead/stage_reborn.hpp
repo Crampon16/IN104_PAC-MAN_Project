@@ -29,7 +29,7 @@ public:
     
     //if the piece to create intersects with static blocks, the grid is reset and the piece created
     //if the piece to create intersects with moving blocks, it isn't created
-    void add_piece(char shape = ' ', int column = -1);
+    void add_piece(int column = -1);
     void reset();
     
     void move(Uint32 delta);
