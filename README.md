@@ -13,6 +13,7 @@ Run the .exe in the same folder as the two folders from the .zip.
 
 You can find the .zip file of the project as well as the music files required to compile the code on : https://drive.google.com/drive/folders/1vAfjkoQY26vbqMUDis2KcLu5SAT9WdSQ?usp=sharing.
 
+Move with ZQSD.
 
 Naming conventions used in the project:
 
