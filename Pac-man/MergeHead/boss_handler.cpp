@@ -64,7 +64,7 @@ void boss_fight(SDL_Renderer* renderer, std::vector<LTexture*> const &textures, 
                 SDL_Point boss_pos = mhead.get_position();
                 for (int i = 0; i < 8; i++)
                 {
-                    double angle = i*2*M_PI/10;
+                    double angle = i*2*M_PI/8;
                     SDL_Point offset = {static_cast<int>(2*AVATAR_SIZE*cos(angle)), static_cast<int>(2*AVATAR_SIZE*sin(angle))};
                     Pellet pellet({boss_pos.x+offset.x, boss_pos.y+offset.y}, boss_pos);
                     pellets.push_back(pellet);
