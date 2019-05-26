@@ -275,16 +275,31 @@ int main(int argv, char** args)
             //if(true /*classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit)*/)
             if(classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit))
             {
-                bool victory;
                 Mix_PlayMusic(tracks[4], -1);
                 display_splash(renderer,splash_screens[0], 4000, quit);
-                Mix_PlayMusic(tracks[1], -1);
-                display_splash(renderer,splash_screens[1], 3000, quit);
-                boss_fight(renderer, boss_stage_textures, font, sounds, tracks, victory, quit );
-                if (victory)
+                
+                //level 2
+                layout = "layout3.txt";
+                
+                if(classic_level(layout, renderer, normal_stage_textures, font, sounds, tracks, quit))
                 {
-                    Mix_PlayMusic(tracks[3], -1);
-                    display_splash(renderer, splash_screens[0], 100000, quit);
+                    bool victory;
+                    Mix_PlayMusic(tracks[4], -1);
+                    display_splash(renderer,splash_screens[0], 4000, quit);
+                    //boss level
+                    Mix_PlayMusic(tracks[1], -1);
+                    display_splash(renderer,splash_screens[1], 3000, quit);
+                    boss_fight(renderer, boss_stage_textures, font, sounds, tracks, victory, quit );
+                    if (victory)
+                    {
+                        Mix_PlayMusic(tracks[3], -1);
+                        display_splash(renderer, splash_screens[0], 100000, quit);
+                    }
+                    else
+                    {
+                        Mix_PlayMusic(tracks[2], -1);
+                        display_splash(renderer, splash_screens[2], 21000, quit);
+                    }
                 }
                 else
                 {
